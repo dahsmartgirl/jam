@@ -239,7 +239,7 @@ export default function Hero({ darkMode }: HeroProps) {
             {/* Start Jamming Button */}
             <button 
               type="button" 
-              className="group relative cursor-pointer inline-flex items-center justify-center gap-0 rounded-full py-1.5 px-5 text-center text-sm font-normal shadow-sm transition-all hover:opacity-90 active:brightness-95 bg-foreground text-background border border-transparent w-auto font-sans"
+              className="btn-gradient-highlight group relative cursor-pointer inline-flex items-center justify-center gap-0 rounded-full py-1.5 px-5 text-center text-sm font-normal shadow-sm transition-all hover:opacity-90 active:brightness-95 bg-foreground text-background border border-transparent w-auto font-sans"
             >
               <span>Start Jamming</span>
               <span className="inline-flex overflow-hidden max-w-0 ml-0 group-hover:max-w-6 group-hover:ml-1.5 transition-all duration-300 ease-out">

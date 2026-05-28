@@ -122,10 +122,9 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               Sign in
             </button>
 
-            {/* Start Jamming */}
             <button 
               data-slot="button" 
-              className="cursor-pointer items-center justify-center whitespace-nowrap text-xs font-normal transition-all bg-foreground text-background hover:opacity-90 h-7 px-3 rounded-full group gap-0 hidden md:flex font-sans" 
+              className="btn-gradient-highlight cursor-pointer items-center justify-center whitespace-nowrap text-xs font-normal transition-all bg-foreground text-background hover:opacity-90 h-7 px-3 rounded-full group gap-0 hidden md:flex font-sans" 
               type="button"
             >
               <span>Start Jamming</span>
@@ -169,7 +168,7 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
           <div className="flex flex-col gap-3 border-t border-border/40 pt-3">
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 py-1">Pricing</a>
             <a href="#signin" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 py-1">Sign in</a>
-            <button className="bg-foreground text-background font-normal rounded-full text-sm py-2 w-full mt-1 flex items-center justify-center gap-1.5 hover:opacity-90">
+            <button className="btn-gradient-highlight bg-foreground text-background font-normal rounded-full text-sm py-2 w-full mt-1 flex items-center justify-center gap-1.5 hover:opacity-90">
               <span>Start Jamming</span>
               <ArrowRight className="h-4 w-4" />
             </button>

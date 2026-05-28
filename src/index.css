@@ -417,17 +417,7 @@
 }
 
 /* Global 0.5px border and outline width overrides */
-*, ::before, ::after {
-  --tw-border-width: 0.5px;
-}
-
-.border,
-.border-t,
-.border-b,
-.border-l,
-.border-r,
-.border-x,
-.border-y {
+.border {
   border-width: 0.5px !important;
 }
 
@@ -461,5 +451,80 @@
 .outline-1,
 .outline-2 {
   outline-width: 0.5px !important;
+}
+
+/* React Flow canvas elements line consolidation */
+.react-flow__node {
+  border-width: 0.5px !important;
+}
+.react-flow__handle {
+  border-width: 0.5px !important;
+}
+.react-flow__edge-path {
+  stroke-width: 0.5px !important;
+}
+
+/* Animated gradient highlight button - Same pattern adapted per theme */
+.btn-gradient-highlight {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+/* Ensure the button contents are on top of the gradient sweep */
+.btn-gradient-highlight > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Base shine-sweep pseudo-element for both themes */
+.btn-gradient-highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-repeat: no-repeat !important;
+  background-size: 200% 100%;
+  animation: shine-sweep 3.5s linear infinite;
+  pointer-events: none;
+}
+
+/* Light Mode: Sheen sweep with silver reflection and brand ruby/red tint */
+.btn-gradient-highlight::before {
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(241, 6, 6, 0.12) 40%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(186, 8, 73, 0.12) 60%,
+    rgba(255, 255, 255, 0) 70%
+  ) !important;
+}
+
+/* Dark Mode: Adapted sheen sweep with brighter white gloss and softer brand tint for the light button face */
+.dark .btn-gradient-highlight::before {
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(241, 6, 6, 0.08) 40%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(186, 8, 73, 0.08) 60%,
+    rgba(255, 255, 255, 0) 70%
+  ) !important;
+}
+
+/* Subtle translation on hover for interactive feel in both modes */
+.btn-gradient-highlight:hover {
+  transform: translateY(-0.5px);
+}
+
+@keyframes shine-sweep {
+  0%, 10% {
+    background-position: 200% 0;
+  }
+  70%, 100% {
+    background-position: -200% 0;
+  }
 }
 

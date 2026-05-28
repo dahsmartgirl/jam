@@ -78,9 +78,9 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="border-t border-border">
+    <div>
       {/* Spread Like Jam Call to Action Section */}
-      <section className="dark:bg-background relative overflow-hidden bg-[#FAF9F5] py-24 md:py-32 lg:py-40 border-b border-border">
+      <section className="dark:bg-background relative overflow-hidden bg-[#FAF9F5] py-24 md:py-32 lg:py-40">
         <div className="absolute inset-0 z-0">
           <section className="p-4 flex items-center justify-center h-full w-full relative" style={{ width: '100%', height: '100%' }}>
             <div className="w-full h-full relative">
