@@ -87,18 +87,21 @@ export default function Hero({ darkMode }: HeroProps) {
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
-    const gridSpacing = 12;
-    const maxDotRadius = 2.0;
     let animTime = 0;
 
     const animate = () => {
       animTime += 1;
       ctx.clearRect(0, 0, width, height);
 
+      const isMobile = width < 640;
+      const gridSpacing = isMobile ? 7 : 8;
+      const maxDotRadius = isMobile ? 0.95 : 1.35;
+
       const cx = width * 0.85 + Math.sin(animTime * 0.005) * 30;
       const cy = height * 0.15 + Math.cos(animTime * 0.004) * 20;
 
-      const maxClusterRadius = Math.min(width, height) * 1.05;
+      // Span full container
+      const maxClusterRadius = Math.sqrt(width * width + height * height);
 
       const cols = Math.ceil(width / gridSpacing);
       const rows = Math.ceil(height / gridSpacing);
@@ -112,12 +115,11 @@ export default function Hero({ darkMode }: HeroProps) {
           const dy = y - cy;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist > maxClusterRadius) continue;
+          // Span full container with a soft minimum baseline intensity
+          let intensity = 0.15 + 0.85 * Math.pow(Math.max(0, 1 - dist / maxClusterRadius), 1.8);
 
-          let intensity = Math.pow(Math.max(0, 1 - dist / maxClusterRadius), 2.2);
-
-          // Traveling wave rippling outward (expanding) from the top-right center towards the middle/left
-          const wave = Math.sin(dist * 0.018 - animTime * 0.04) * 0.12;
+          // Traveling wave rippling outward (expanding) with a higher amplitude (0.24) and wider bands (0.012)
+          const wave = Math.sin(dist * 0.012 - animTime * 0.045) * 0.24;
           intensity = Math.max(0, Math.min(1, intensity + wave));
 
           if (intensity <= 0.01) continue;
@@ -135,39 +137,39 @@ export default function Hero({ darkMode }: HeroProps) {
             const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
             if (mdist < 110) {
               hoverAmt = (110 - mdist) / 110;
-              currentRadius += hoverAmt * 2.8;
+              currentRadius += hoverAmt * (isMobile ? 1.2 : 2.5);
               intensity = Math.max(intensity, hoverAmt * 0.7);
             }
           }
 
-          if (currentRadius < 0.4) continue;
+          if (currentRadius < 0.25) continue;
 
           let colorStr = '';
           const opacity = Math.min(1, intensity * (0.6 + hoverAmt * 0.3));
 
           if (staticRandom < 0.06) {
             if (darkMode) {
-              colorStr = `rgba(244, 63, 94, ${opacity * 0.5})`;
+              colorStr = `rgba(244, 63, 94, ${opacity * 0.7})`;
             } else {
-              colorStr = `rgba(194, 29, 76, ${opacity * 0.5})`;
+              colorStr = `rgba(194, 29, 76, ${opacity * 0.7})`;
             }
           } else if (staticRandom < 0.28) {
             if (darkMode) {
-              colorStr = `rgba(242, 241, 243, ${opacity * 0.35})`;
+              colorStr = `rgba(242, 241, 243, ${opacity * 0.48})`;
             } else {
-              colorStr = `rgba(16, 16, 16, ${opacity * 0.28})`;
+              colorStr = `rgba(16, 16, 16, ${opacity * 0.42})`;
             }
           } else if (staticRandom < 0.65) {
             if (darkMode) {
-              colorStr = `rgba(154, 149, 159, ${opacity * 0.28})`;
+              colorStr = `rgba(154, 149, 159, ${opacity * 0.38})`;
             } else {
-              colorStr = `rgba(94, 90, 98, ${opacity * 0.2})`;
+              colorStr = `rgba(94, 90, 98, ${opacity * 0.32})`;
             }
           } else {
             if (darkMode) {
-              colorStr = `rgba(42, 40, 45, ${opacity * 0.20})`;
+              colorStr = `rgba(42, 40, 45, ${opacity * 0.28})`;
             } else {
-              colorStr = `rgba(222, 219, 225, ${opacity * 0.14})`;
+              colorStr = `rgba(222, 219, 225, ${opacity * 0.22})`;
             }
           }
 
@@ -228,7 +230,7 @@ export default function Hero({ darkMode }: HeroProps) {
           </h1>
 
           {/* Subtext */}
-          <p className="text-muted-foreground text-base sm:text-lg font-light leading-relaxed max-w-md">
+          <p className="text-muted-foreground text-base sm:text-lg font-normal leading-relaxed max-w-md">
             Full-stack marketing agents that win you customers across every channel.
           </p>
 

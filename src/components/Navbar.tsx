@@ -9,8 +9,6 @@ interface NavbarProps {
 export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [productOpen, setProductOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,63 +19,86 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
   }, []);
 
   return (
-    <nav className={`fixed top-0 right-0 left-0 z-[60] transition-all duration-300 ease-in-out border-b ${
+    <nav className={`fixed top-0 right-0 left-0 z-[60] border-b border-border ${
       scrolled 
-        ? 'bg-background/80 backdrop-blur-md border-border' 
-        : 'bg-transparent border-transparent'
+        ? 'bg-background/80 backdrop-blur-md' 
+        : 'bg-transparent'
     }`}>
       <div className="mx-auto max-w-[1800px] px-6 sm:px-10 lg:px-16">
         <div className="relative flex h-12 items-center justify-between">
           
           {/* Logo link */}
-          <a className="flex items-center gap-1.5 select-none" href="/">
+          <a className="flex items-center gap-2 select-none" href="/">
             <img 
               src="/jam-logo.svg"
               alt="Jam"
-              className="h-4 w-auto"
+              className="h-7 w-auto"
             />
-            <span className="text-foreground text-sm font-medium tracking-tight">Jam</span>
+            <span className="text-foreground text-lg font-medium tracking-tight">Jam</span>
           </a>
 
           {/* Navigation Links in Center */}
           <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 md:flex">
             {/* Product Dropdown */}
-            <div className="relative">
+            <div className="relative group">
               <button 
                 type="button"
-                onClick={() => { setProductOpen(!productOpen); setResourcesOpen(false); }}
-                className="text-foreground inline-flex items-center gap-1 text-sm font-normal transition-opacity hover:opacity-70 cursor-pointer font-sans"
+                className="text-foreground inline-flex items-center gap-1 text-sm font-normal transition-opacity hover:opacity-70 cursor-pointer font-sans h-12"
               >
                 Product
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${productOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
               </button>
-              {productOpen && (
-                <div className="absolute top-10 left-1/2 -translate-x-1/2 w-48 glass-panel p-2 shadow-md z-50 flex flex-col gap-1 font-sans">
-                  <a href="#aeo" onClick={() => setProductOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">AI Citations (AEO)</a>
-                  <a href="#inbox" onClick={() => setProductOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Email Outbound</a>
-                  <a href="#alerts" onClick={() => setProductOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Social Monitoring</a>
-                  <a href="#automations" onClick={() => setProductOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Custom Workflows</a>
+              
+              {/* Redesigned Sublinks Container */}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
+                <div className="w-56 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-2 flex flex-col gap-0.5 font-sans">
+                  <a href="#aeo" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">AI Citations (AEO)</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Rank on AI Search engines</span>
+                  </a>
+                  <a href="#inbox" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Email Outbound</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Direct deliverability at scale</span>
+                  </a>
+                  <a href="#alerts" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Social Monitoring</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Listen and respond in real-time</span>
+                  </a>
+                  <a href="#automations" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Custom Workflows</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Branching logic node canvas</span>
+                  </a>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Resources Dropdown */}
-            <div className="relative">
+            <div className="relative group">
               <button 
                 type="button"
-                onClick={() => { setResourcesOpen(!resourcesOpen); setProductOpen(false); }}
-                className="text-foreground inline-flex items-center gap-1 text-sm font-normal transition-opacity hover:opacity-70 cursor-pointer font-sans"
+                className="text-foreground inline-flex items-center gap-1 text-sm font-normal transition-opacity hover:opacity-70 cursor-pointer font-sans h-12"
               >
                 Resources
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${resourcesOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
               </button>
-              {resourcesOpen && (
-                <div className="absolute top-10 left-1/2 -translate-x-1/2 w-40 glass-panel p-2 shadow-md z-50 flex flex-col gap-1 font-sans">
-                  <a href="/manifesto" onClick={() => setResourcesOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Manifesto</a>
-                  <a href="#blog" onClick={() => setResourcesOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Blog</a>
-                  <a href="#changelog" onClick={() => setResourcesOpen(false)} className="px-3 py-1.5 rounded-lg text-xs text-foreground/80 hover:bg-accent hover:text-foreground transition-colors font-sans">Changelog</a>
+              
+              {/* Redesigned Sublinks Container */}
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
+                <div className="w-48 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-2 flex flex-col gap-0.5 font-sans">
+                  <a href="/manifesto" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Manifesto</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Our growth engineering ideas</span>
+                  </a>
+                  <a href="#blog" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Blog</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Marketing and AI guides</span>
+                  </a>
+                  <a href="#changelog" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
+                    <span className="text-xs font-semibold text-foreground">Changelog</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">See what we've built</span>
+                  </a>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Pricing link */}
@@ -87,17 +108,17 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
           </div>
 
           {/* Right Area Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             {/* Theme selector */}
             <button 
-              className="h-7 w-7 flex items-center justify-center p-1 rounded-full text-foreground hover:bg-accent/50 cursor-pointer transition-colors bg-transparent border-0 outline-none" 
+              className="h-7 w-7 flex items-center justify-center p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors bg-transparent border-0 outline-none" 
               onClick={() => setDarkMode(!darkMode)}
             >
-              {darkMode ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
             {/* Sign in */}
-            <button className="text-foreground hidden text-sm font-normal transition-opacity hover:opacity-70 md:block cursor-pointer font-sans">
+            <button className="rounded-full border border-zinc-300 dark:border-zinc-800 h-7 px-3 flex items-center justify-center text-xs font-normal transition-colors hover:bg-muted/40 text-foreground bg-transparent cursor-pointer font-sans hidden md:flex">
               Sign in
             </button>
 

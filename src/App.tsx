@@ -41,7 +41,7 @@ export default function App() {
   ];
 
   return (
-    <div className="dark:bg-background min-h-screen bg-[#FAF9F5] text-foreground transition-colors duration-300">
+    <div className="dark:bg-background min-h-screen bg-[#FAF9F5] text-foreground">
       {/* 1. Navigation Bar */}
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 

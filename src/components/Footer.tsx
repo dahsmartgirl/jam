@@ -139,7 +139,7 @@ export default function Footer() {
                 />
                 <span className="text-foreground text-lg font-medium tracking-tight">Jam</span>
               </div>
-              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+              <p className="text-muted-foreground mt-3 text-sm font-normal leading-relaxed">
                 Full-stack marketing agents that win you customers across every channel.
               </p>
             </div>
@@ -247,7 +247,7 @@ export default function Footer() {
             </div>
             <div className="ml-auto flex flex-col items-end gap-3 justify-end">
               <p className="text-muted-foreground text-sm">
-                © 2026 Nosu Dev, Inc
+                © 2026 Jam, Inc
               </p>
             </div>
           </div>
