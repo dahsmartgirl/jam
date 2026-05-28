@@ -987,15 +987,8 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
         <header className="bg-background border-b border-border h-12 flex-shrink-0">
           <div className="flex h-full items-center justify-between px-4">
             
-            {/* Header Left (Mac style dots + Logo + Title dropdown) */}
-            <div className="flex flex-shrink-0 items-center gap-4 overflow-hidden transition-all duration-300 w-[38%]">
-              {/* Mac Traffic Light dots */}
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <span className="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]/20" />
-                <span className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]/20" />
-                <span className="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]/20" />
-              </div>
-              
+            {/* Header Left (Tab indicator dropdown button) */}
+            <div className="flex flex-shrink-0 items-center gap-3 overflow-hidden transition-all duration-300 w-[36%]">
               <div className="flex flex-shrink-0 items-center">
                 <img 
                   alt="Jam" 
