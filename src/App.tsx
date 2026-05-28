@@ -93,16 +93,16 @@ export default function App() {
               </div>
 
               {/* Tab Selector Buttons Bar */}
-              <div className="relative z-10 flex-shrink-0 px-4 py-4 sm:px-6 sm:py-5">
+              <div className="relative z-10 flex-shrink-0 px-6 pt-6 pb-4 sm:px-10 sm:pt-8 sm:pb-5 lg:px-16">
                 <div className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto">
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`rounded-full px-4 py-2 text-sm whitespace-nowrap transition-colors cursor-pointer ${
+                      className={`rounded-full px-5 py-1.5 text-sm font-normal font-sans whitespace-nowrap transition-all duration-150 cursor-pointer ${
                         activeTab === tab.id 
-                          ? 'bg-foreground text-background font-medium' 
-                          : 'bg-background/80 text-foreground hover:bg-background border-border border backdrop-blur'
+                          ? 'bg-foreground text-background border border-transparent shadow-xs' 
+                          : 'bg-background/80 text-foreground hover:bg-background border-border border backdrop-blur-xs shadow-xs'
                       }`}
                     >
                       {tab.name}
@@ -112,8 +112,10 @@ export default function App() {
               </div>
 
               {/* Workflow Canvas display */}
-              <section className="relative min-h-0 flex-1 md:min-w-[1432px]">
-                <WorkflowCanvas activeTab={activeTab} darkMode={darkMode} />
+              <section className="relative min-h-0 flex-1 md:px-10 md:pb-10 lg:px-16 lg:pb-16 flex flex-col">
+                <div className="h-full w-full md:rounded-2xl md:overflow-hidden md:border md:border-border/85 md:bg-background md:shadow-2xl md:transition-all md:duration-300 md:hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.35)] md:dark:hover:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.75)] flex flex-col min-h-0 flex-1">
+                  <WorkflowCanvas activeTab={activeTab} darkMode={darkMode} />
+                </div>
               </section>
 
             </div>

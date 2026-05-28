@@ -381,6 +381,15 @@
   opacity: 0.95;
 }
 
+/* Hide scrollbars utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none !important;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Custom Scrollbar Styles — ultra-thin overlay */
 * {
   scrollbar-width: thin;
