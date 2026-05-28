@@ -230,7 +230,7 @@ export default function Hero({ darkMode }: HeroProps) {
           </h1>
 
           {/* Subtext */}
-          <p className="text-muted-foreground text-base sm:text-lg font-normal leading-relaxed max-w-md">
+          <p className="text-muted-foreground text-base sm:text-lg font-normal leading-relaxed max-w-[280px] sm:max-w-md">
             Full-stack marketing agents that win you customers across every channel.
           </p>
 

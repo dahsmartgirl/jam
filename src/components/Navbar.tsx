@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, ChevronDown, ArrowRight, Menu, X } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -136,10 +136,14 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
 
             {/* Mobile menu toggle */}
             <button 
-              className="text-foreground flex items-center justify-center md:hidden p-2 rounded hover:bg-accent"
+              className="text-foreground flex items-center justify-center md:hidden p-2 rounded hover:bg-accent cursor-pointer focus:outline-none"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <div className="flex flex-col gap-1.5 justify-center items-center w-5 h-5">
+                <span className={`block h-[1.5px] w-5 bg-foreground transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'rotate-45 translate-y-[4.5px]' : ''}`} />
+                <span className={`block h-[1.5px] w-5 bg-foreground transition-all duration-300 ease-in-out ${mobileMenuOpen ? '-rotate-45 -translate-y-[4.5px]' : ''}`} />
+              </div>
             </button>
           </div>
 

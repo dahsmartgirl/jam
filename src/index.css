@@ -416,3 +416,50 @@
   background: rgba(242, 241, 243, 0.25);
 }
 
+/* Global 0.5px border and outline width overrides */
+*, ::before, ::after {
+  --tw-border-width: 0.5px;
+}
+
+.border,
+.border-t,
+.border-b,
+.border-l,
+.border-r,
+.border-x,
+.border-y {
+  border-width: 0.5px !important;
+}
+
+.border-t {
+  border-top-width: 0.5px !important;
+}
+
+.border-b {
+  border-bottom-width: 0.5px !important;
+}
+
+.border-l {
+  border-left-width: 0.5px !important;
+}
+
+.border-r {
+  border-right-width: 0.5px !important;
+}
+
+.border-x {
+  border-left-width: 0.5px !important;
+  border-right-width: 0.5px !important;
+}
+
+.border-y {
+  border-top-width: 0.5px !important;
+  border-bottom-width: 0.5px !important;
+}
+
+.outline,
+.outline-1,
+.outline-2 {
+  outline-width: 0.5px !important;
+}
+

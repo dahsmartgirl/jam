@@ -245,7 +245,7 @@ export default function Footer() {
                 </ul>
               </div>
             </div>
-            <div className="ml-auto flex flex-col items-end gap-3 justify-end">
+            <div className="flex flex-col items-start gap-3 justify-end md:ml-auto">
               <p className="text-muted-foreground text-sm">
                 © 2026 Jam, Inc
               </p>
