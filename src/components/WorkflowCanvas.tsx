@@ -387,7 +387,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
   }, [activeTab]);
 
   // Mobile navigation tab inside mockup
-  const [mobileSubTab, setMobileSubTab] = useState<'chat' | 'preview' | 'workflow'>('preview');
+  const [mobileSubTab, setMobileSubTab] = useState<'chat' | 'preview' | 'workflow'>('chat');
 
   // Interactive Playback State
   const [revealedMessages, setRevealedMessages] = useState<any[]>([]);
@@ -430,7 +430,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
   // Set default tabs depending on scenario workflow availability
   useEffect(() => {
     setActiveRightTab('preview');
-    setMobileSubTab('preview');
+    setMobileSubTab('chat');
   }, [scenario, hasWorkflow]);
 
   // Restart playback when tab changes
@@ -553,22 +553,22 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
   }, [revealedMessages, isTyping, activeToolRun]);
 
   // Render Tool Call Outputs inside Preview Tab
-  const renderPreviewContent = () => {
+  const renderPreviewContent = (isMobile: boolean = false) => {
     const isRunning = activeToolRun !== null && !toolCompleted;
     if (isRunning) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center bg-background text-muted-foreground select-none">
-          <Loader2 className="h-8 w-8 text-primary animate-spin mb-4" />
-          <div className="text-sm font-medium text-foreground">Running AI distribution agent...</div>
-          <div className="text-xs text-muted-foreground/60 mt-1.5 font-mono">Executing playbook tool: {activeToolRun}</div>
+          <Loader2 className={`${isMobile ? 'h-10 w-10' : 'h-8 w-8'} text-primary animate-spin mb-4`} />
+          <div className={`${isMobile ? 'text-base' : 'text-sm'} font-medium text-foreground`}>Running AI distribution agent...</div>
+          <div className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground/60 mt-1.5 font-mono`}>Executing playbook tool: {activeToolRun}</div>
           
           {/* Skeleton Load Shimmer */}
           <div className="mt-8 w-full max-w-lg space-y-3">
-            <div className="h-4 bg-muted/40 rounded-full w-3/4 animate-pulse" />
-            <div className="h-3 bg-muted/30 rounded-full w-5/6 animate-pulse" />
-            <div className="h-3 bg-muted/30 rounded-full w-2/3 animate-pulse" />
-            <div className="h-4 bg-muted/40 rounded-full w-1/2 animate-pulse mt-6" />
-            <div className="h-3 bg-muted/30 rounded-full w-4/5 animate-pulse" />
+            <div className={`bg-muted/40 rounded-full w-3/4 animate-pulse ${isMobile ? 'h-5' : 'h-4'}`} />
+            <div className={`bg-muted/30 rounded-full w-5/6 animate-pulse ${isMobile ? 'h-4' : 'h-3'}`} />
+            <div className={`bg-muted/30 rounded-full w-2/3 animate-pulse ${isMobile ? 'h-4' : 'h-3'}`} />
+            <div className={`bg-muted/40 rounded-full w-1/2 animate-pulse mt-6 ${isMobile ? 'h-5' : 'h-4'}`} />
+            <div className={`bg-muted/30 rounded-full w-4/5 animate-pulse ${isMobile ? 'h-4' : 'h-3'}`} />
           </div>
         </div>
       );
@@ -577,9 +577,9 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
     if (!toolCompleted && revealedMessages.length < 3) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center bg-background text-muted-foreground/50 select-none">
-          <Terminal className="h-8 w-8 text-muted-foreground/30 mb-3" />
-          <div className="text-sm">Waiting for agent to execute tools...</div>
-          <div className="text-xs text-muted-foreground/40 mt-1 max-w-xs leading-normal">
+          <Terminal className={`${isMobile ? 'h-10 w-10' : 'h-8 w-8'} text-muted-foreground/30 mb-3`} />
+          <div className={isMobile ? 'text-base' : 'text-sm'}>Waiting for agent to execute tools...</div>
+          <div className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/40 mt-1 max-w-xs leading-normal`}>
             Data results will populate here once the playbook is triggered in the chat.
           </div>
         </div>
@@ -594,38 +594,38 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Top Score Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-border/50 pb-5">
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Citation Score</span>
-                <span className="text-3xl font-light text-foreground mt-1">7%</span>
-                <span className="text-xs text-muted-foreground/80 mt-1">13 of 184 responses</span>
+                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Citation Score</span>
+                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>7%</span>
+                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>13 of 184 responses</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Identified Gaps</span>
-                <span className="text-3xl font-light text-foreground mt-1">6 Gaps</span>
-                <span className="text-xs text-muted-foreground/80 mt-1">Stale & missing content</span>
+                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Identified Gaps</span>
+                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>6 Gaps</span>
+                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>Stale & missing content</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Content Freshness</span>
-                <span className="text-3xl font-light text-foreground mt-1">68%</span>
-                <span className="text-xs text-muted-foreground/80 mt-1">19 of 28 pages fresh</span>
+                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Content Freshness</span>
+                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>68%</span>
+                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>19 of 28 pages fresh</span>
               </div>
             </div>
 
             {/* Platform breakdowns */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Platforms Citation Rate</h4>
+              <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Platforms Citation Rate</h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {Object.entries(report?.platformBreakdown || {}).map(([platform, stats]: [string, any]) => {
                   const percent = Math.round((stats.ourSiteCited / stats.total) * 100);
                   return (
                     <div key={platform} className="bg-muted/10 border border-border/30 p-3 rounded-lg flex flex-col">
-                      <div className="flex justify-between items-center text-sm font-semibold">
+                      <div className={`flex justify-between items-center font-semibold ${isMobile ? 'text-base' : 'text-sm'}`}>
                         <span>{platform}</span>
                         <span className="text-foreground">{percent}%</span>
                       </div>
-                      <div className="h-2.5 w-full bg-muted/40 rounded-full overflow-hidden mt-2">
+                      <div className={`${isMobile ? 'h-3.5' : 'h-2.5'} w-full bg-muted/40 rounded-full overflow-hidden mt-2`}>
                         <div className="h-full bg-foreground rounded-full" style={{ width: `${percent}%` }} />
                       </div>
-                      <span className="text-[11px] text-muted-foreground/70 mt-1.5">{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
+                      <span className={`text-muted-foreground/70 mt-1.5 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
                     </div>
                   );
                 })}
@@ -635,15 +635,15 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Cited Brands comparison chart */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Cited Brands count</h4>
+                <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Cited Brands count</h4>
                 <div className="border border-border rounded-xl bg-card p-4 space-y-3">
                   {report?.citedBrands.map((b: any) => (
-                    <div key={b.brand} className="space-y-1 text-sm">
+                    <div key={b.brand} className={`space-y-1 ${isMobile ? 'text-base' : 'text-sm'}`}>
                       <div className="flex justify-between font-medium">
                         <span className={b.brand.includes('Us') ? 'text-foreground font-bold' : 'text-foreground/75'}>{b.brand}</span>
                         <span className="text-muted-foreground">{b.count} mentions</span>
                       </div>
-                      <div className="h-3 w-full bg-muted/40 rounded-full overflow-hidden">
+                      <div className={`${isMobile ? 'h-4' : 'h-3'} w-full bg-muted/40 rounded-full overflow-hidden`}>
                         <div 
                           className={`h-full rounded-full ${b.brand.includes('Us') ? 'bg-foreground' : 'bg-foreground/20'}`} 
                           style={{ width: `${b.pct}%` }} 
@@ -656,12 +656,12 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
 
               {/* Gaps List */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Identified Opportunity Gaps</h4>
-                <div className="border border-border rounded-xl bg-card p-4 text-sm divide-y divide-border/30 max-h-[220px] overflow-y-auto">
+                <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Identified Opportunity Gaps</h4>
+                <div className="border border-border rounded-xl bg-card p-4 divide-y divide-border/30 max-h-[220px] overflow-y-auto">
                   {report?.gaps.map((gap: any, i: number) => (
                     <div key={i} className="py-2.5 first:pt-0 last:pb-0">
-                      <div className="font-semibold text-foreground truncate">{gap.question}</div>
-                      <div className="text-muted-foreground/80 text-xs mt-0.5">{gap.opportunity}</div>
+                      <div className={`font-semibold text-foreground truncate ${isMobile ? 'text-base' : 'text-sm'}`}>{gap.question}</div>
+                      <div className={`text-muted-foreground/80 mt-0.5 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{gap.opportunity}</div>
                     </div>
                   ))}
                 </div>
@@ -676,32 +676,32 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
         return (
           <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-border/50">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Social Lead Stream</span>
-              <span className="text-[11px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} hits found</span>
+              <span className={`font-bold uppercase tracking-wider text-muted-foreground ${isMobile ? 'text-sm' : 'text-xs'}`}>Social Lead Stream</span>
+              <span className={`border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{report?.totalFound} hits found</span>
             </div>
 
             <div className="space-y-3.5">
               {report?.posts.map((post: any) => (
                 <div key={post.id} className="border border-border rounded-xl bg-card p-4 hover:shadow-2xs transition-shadow">
                   {/* Post Header */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="bg-muted text-foreground/80 font-mono text-[11px] px-2 py-0.5 rounded border border-border/30">
+                  <div className={`flex items-center gap-2 ${isMobile ? 'text-base' : 'text-sm'}`}>
+                    <div className={`bg-muted text-foreground/80 font-mono px-2 py-0.5 rounded border border-border/30 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
                       {post.platform === 'twitter' ? 'X/Twitter' : 'Reddit'}
                     </div>
                     <span className="font-semibold text-foreground">{post.authorName}</span>
-                    {post.authorHandle && <span className="text-muted-foreground/75 text-xs">@{post.authorHandle}</span>}
-                    {post.subreddit && <span className="text-foreground/70 font-mono text-[11px] font-semibold">{post.subreddit}</span>}
-                    <span className="text-muted-foreground/50 text-xs ml-auto font-mono">
+                    {post.authorHandle && <span className={`text-muted-foreground/75 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>@{post.authorHandle}</span>}
+                    {post.subreddit && <span className={`text-foreground/70 font-mono font-semibold ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{post.subreddit}</span>}
+                    <span className={`text-muted-foreground/50 ml-auto font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
                       {post.followers ? `Followers: ${post.followers}` : `Ratio: ${post.upvoteRatio}`}
                     </span>
                   </div>
 
                   {/* Post Content */}
-                  {post.title && <div className="font-bold text-sm mt-2 text-foreground">{post.title}</div>}
-                  <p className="text-sm text-foreground/85 mt-1.5 leading-relaxed font-normal">{post.text}</p>
+                  {post.title && <div className={`font-bold mt-2 text-foreground ${isMobile ? 'text-base' : 'text-sm'}`}>{post.title}</div>}
+                  <p className={`mt-1.5 leading-relaxed font-normal text-foreground/85 ${isMobile ? 'text-base' : 'text-sm'}`}>{post.text}</p>
 
                   {/* Engagement Footer */}
-                  <div className="flex gap-4 mt-3 text-xs text-muted-foreground/80 border-t border-border/30 pt-2 font-mono">
+                  <div className={`flex gap-4 mt-3 text-muted-foreground/80 border-t border-border/30 pt-2 font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
                     <span>Likes: {post.engagement.likes}</span>
                     <span>Comments: {post.engagement.comments}</span>
                     {post.engagement.shares !== undefined && <span>Retweets: {post.engagement.shares}</span>}
@@ -718,12 +718,12 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
         return (
           <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-border/50 flex-shrink-0">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Prospecting CRM list</span>
-              <span className="text-[11px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} leads enriched</span>
+              <span className={`font-bold uppercase tracking-wider text-muted-foreground ${isMobile ? 'text-sm' : 'text-xs'}`}>Prospecting CRM list</span>
+              <span className={`border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{report?.totalFound} leads enriched</span>
             </div>
 
             <div className="flex-1 overflow-auto mt-3">
-              <table className="w-full text-left border-collapse text-sm">
+              <table className={`w-full text-left border-collapse ${isMobile ? 'text-base' : 'text-sm'}`}>
                 <thead>
                   <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                     <th className="p-2 w-8"></th>
@@ -738,14 +738,16 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                   {report?.contacts.map((c: any) => (
                     <tr key={c.id} className="hover:bg-muted/10 transition-colors">
                       <td className="p-2">
-                        <div className="w-6 h-6 rounded-full bg-muted text-foreground border border-border/40 flex items-center justify-center font-bold text-[9px] font-mono">{c.initials}</div>
+                        <div className={`rounded-full bg-muted text-foreground border border-border/40 flex items-center justify-center font-bold font-mono ${
+                          isMobile ? 'w-8 h-8 text-xs' : 'w-6 h-6 text-[9px]'
+                        }`}>{c.initials}</div>
                       </td>
                       <td className="p-2 font-semibold text-foreground">{c.name}</td>
                       <td className="p-2 text-foreground/80">{c.company}</td>
                       <td className="p-2 text-muted-foreground">{c.title}</td>
-                      <td className="p-2 text-muted-foreground/60 text-[10px]">{c.location}</td>
+                      <td className={`p-2 text-muted-foreground/60 ${isMobile ? 'text-xs' : 'text-[10px]'}`}>{c.location}</td>
                       <td className="p-2 text-center">
-                        <a href="#" className="text-foreground/60 hover:text-foreground transition-colors"><Globe className="h-3.5 w-3.5" /></a>
+                        <a href="#" className="text-foreground/60 hover:text-foreground transition-colors"><Globe className={isMobile ? "h-4.5 w-4.5" : "h-3.5 w-3.5"} /></a>
                       </td>
                     </tr>
                   ))}
@@ -763,9 +765,9 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
           <div className="h-full flex text-left bg-transparent text-foreground select-none">
             {/* Email Drafts List Sidebar */}
             <div className="w-2/5 border-r border-border flex flex-col h-full bg-background/80 backdrop-blur-xs">
-              <div className="p-3 border-b border-border text-sm font-semibold text-muted-foreground flex justify-between items-center">
+              <div className={`p-3 border-b border-border font-semibold text-muted-foreground flex justify-between items-center ${isMobile ? 'text-base' : 'text-sm'}`}>
                 <span>Leads Queue</span>
-                <span className="font-mono text-xs">{report?.totalCount} drafts</span>
+                <span className={`font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{report?.totalCount} drafts</span>
               </div>
               <div className="flex-1 overflow-y-auto divide-y divide-border/30">
                 {report?.drafts.map((d: any, idx: number) => (
@@ -776,9 +778,9 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                       selectedEmailIdx === idx ? 'bg-muted/20 border-l-4 border-foreground' : 'hover:bg-muted/10'
                     }`}
                   >
-                    <span className="text-sm font-bold text-foreground">{d.toName}</span>
-                    <span className="text-xs text-muted-foreground truncate">{d.toEmail}</span>
-                    <span className="text-xs text-foreground/60 truncate font-mono mt-1">{d.subject}</span>
+                    <span className={`font-bold text-foreground ${isMobile ? 'text-base' : 'text-sm'}`}>{d.toName}</span>
+                    <span className={`text-muted-foreground truncate ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{d.toEmail}</span>
+                    <span className={`text-foreground/60 truncate font-mono mt-1 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{d.subject}</span>
                   </button>
                 ))}
               </div>
@@ -787,22 +789,24 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Email Detail Pane */}
             <div className="w-3/5 p-5 flex flex-col h-full overflow-y-auto">
               {currentDraft ? (
-                <div className="space-y-4 text-sm h-full flex flex-col">
+                <div className={`space-y-4 h-full flex flex-col ${isMobile ? 'text-base' : 'text-sm'}`}>
                   <div className="space-y-2 border-b border-border/50 pb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-12 font-medium">To:</span>
                       <span className="font-semibold">{currentDraft.toName}</span>
-                      <span className="text-muted-foreground font-mono text-xs">({currentDraft.toEmail})</span>
+                      <span className={`text-muted-foreground font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>({currentDraft.toEmail})</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-12 font-medium">Subject:</span>
                       <span className="font-semibold font-mono text-foreground">{currentDraft.subject}</span>
                     </div>
                   </div>
-                  <div className="flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono text-xs leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px]">
+                  <div className={`flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px] ${
+                    isMobile ? 'text-xs' : 'text-[11px]'
+                  }`}>
                     {currentDraft.body}
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+                  <div className={`flex items-center justify-between text-muted-foreground font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
                     <span>* AI Personalized variables auto-mapped</span>
                     <button className="bg-foreground text-background font-semibold px-3 py-1 rounded-full hover:opacity-90 cursor-pointer shadow-xs transition-opacity">
                       Send now
@@ -810,7 +814,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground/40 text-xs">
+                <div className={`flex items-center justify-center h-full text-muted-foreground/40 ${isMobile ? 'text-sm' : 'text-xs'}`}>
                   Select a draft from the queue
                 </div>
               )}
@@ -826,11 +830,11 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Keywords opportunities table */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Keyword Research opportunities</h4>
-                <span className="text-xs text-foreground/60 font-semibold">* Selected low competition keywords</span>
+                <h4 className={`font-bold uppercase tracking-wider text-muted-foreground ${isMobile ? 'text-sm' : 'text-xs'}`}>Keyword Research opportunities</h4>
+                <span className={`text-foreground/60 font-semibold ${isMobile ? 'text-xs' : 'text-[11px]'}`}>* Selected low competition keywords</span>
               </div>
               <div className="border border-border rounded-xl bg-card overflow-hidden">
-                <table className="w-full text-left border-collapse text-sm">
+                <table className={`w-full text-left border-collapse ${isMobile ? 'text-base' : 'text-sm'}`}>
                   <thead>
                     <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Keyword</th>
@@ -845,7 +849,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                       <tr key={i} className={`hover:bg-muted/10 transition-colors ${k.difficulty < 30 ? 'bg-muted/5' : ''}`}>
                         <td className="p-2 font-medium text-foreground">
                           {k.keyword}
-                          {k.difficulty < 30 && <span className="ml-2 bg-muted text-foreground border border-border/30 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">low diff</span>}
+                          {k.difficulty < 30 && <span className={`ml-2 bg-muted text-foreground border border-border/30 font-mono font-bold px-1.5 py-0.5 rounded ${isMobile ? 'text-xs' : 'text-[10px]'}`}>low diff</span>}
                         </td>
                         <td className="p-2 text-right font-mono">{k.volume.toLocaleString()}</td>
                         <td className="p-2 text-center font-mono">
@@ -855,7 +859,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                         </td>
                         <td className="p-2 text-right font-mono">{k.cpc}</td>
                         <td className="p-2 text-center">
-                          <span className="bg-foreground/5 text-foreground/60 text-[11px] px-1.5 py-0.5 rounded-full font-medium">{k.intent}</span>
+                          <span className={`bg-foreground/5 text-foreground/60 px-1.5 py-0.5 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{k.intent}</span>
                         </td>
                       </tr>
                     ))}
@@ -866,9 +870,9 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
 
             {/* SERP Competitors */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Competitor SERP analysis</h4>
+              <h4 className={`font-bold uppercase tracking-wider text-muted-foreground ${isMobile ? 'text-sm' : 'text-xs'}`}>Competitor SERP analysis</h4>
               <div className="border border-border rounded-xl bg-card overflow-hidden">
-                <table className="w-full text-left border-collapse text-sm">
+                <table className={`w-full text-left border-collapse ${isMobile ? 'text-base' : 'text-sm'}`}>
                   <thead>
                     <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Domain</th>
@@ -970,12 +974,13 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                       toolCompleted={toolCompleted}
                       onRestart={handleRestartPlayback}
                       chatContainerRef={chatContainerRef}
+                      isMobile={true}
                     />
                   </div>
                 )}
                 {mobileSubTab === 'preview' && (
                   <div className="w-full h-full bg-transparent overflow-hidden">
-                    {renderPreviewContent()}
+                    {renderPreviewContent(true)}
                   </div>
                 )}
                 {mobileSubTab === 'workflow' && hasWorkflow && (
@@ -985,6 +990,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                         steps={scenario.workflowSteps} 
                         nodeStates={workflowNodeStates}
                         darkMode={darkMode}
+                        isMobile={true}
                       />
                     </div>
                   </div>
@@ -1211,7 +1217,8 @@ const ChatSidebar = ({
   activeToolRun,
   toolCompleted,
   onRestart,
-  chatContainerRef
+  chatContainerRef,
+  isMobile = false
 }: {
   revealedMessages: any[];
   isTyping: boolean;
@@ -1219,13 +1226,16 @@ const ChatSidebar = ({
   toolCompleted: boolean;
   onRestart: () => void;
   chatContainerRef: React.RefObject<HTMLDivElement | null>;
+  isMobile?: boolean;
 }) => {
   return (
     <div className="flex flex-1 min-h-0 flex-col bg-card select-none">
       {/* Scrollable message window */}
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto pl-4 pr-3 py-4 space-y-4 scrollbar-thin scroll-smooth"
+        className={`flex-1 overflow-y-auto pl-4 pr-3 py-4 scrollbar-thin scroll-smooth ${
+          isMobile ? 'space-y-5' : 'space-y-4'
+        }`}
       >
         {revealedMessages.map((msg) => {
           const isUser = msg.role === 'user';
@@ -1236,14 +1246,18 @@ const ChatSidebar = ({
                 {isUser ? (
                   /* User Message: warm-cream bubble */
                   <div 
-                    className="max-w-[85%] text-xs leading-relaxed px-4 py-2.5 rounded-2xl text-left whitespace-pre-wrap bg-accent text-foreground shadow-2xs"
+                    className={`max-w-[85%] leading-relaxed px-4 py-2.5 rounded-2xl text-left whitespace-pre-wrap bg-accent text-foreground shadow-2xs ${
+                      isMobile ? 'text-base' : 'text-sm'
+                    }`}
                   >
                     {msg.content}
                   </div>
                 ) : (
                   /* Agent Message: plain text, no bubble, no avatar */
                   <div 
-                    className="max-w-[90%] text-xs leading-relaxed text-left whitespace-pre-wrap text-foreground/90 py-1"
+                    className={`max-w-[90%] leading-relaxed text-left whitespace-pre-wrap text-foreground/90 py-1 ${
+                      isMobile ? 'text-base' : 'text-sm'
+                    }`}
                   >
                     {msg.content}
                   </div>
@@ -1252,15 +1266,15 @@ const ChatSidebar = ({
 
               {/* Action Row: ThumbsUp, ThumbsDown, Copy */}
               {!isUser && (
-                <div className="flex items-center gap-2.5 justify-start pl-0.5">
+                <div className={`flex items-center justify-start pl-0.5 ${isMobile ? 'gap-3.5' : 'gap-2.5'}`}>
                   <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
-                    <ThumbsUp className="h-3 w-3" />
+                    <ThumbsUp className={isMobile ? "h-4 w-4" : "h-3 w-3"} />
                   </button>
                   <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
-                    <ThumbsDown className="h-3 w-3" />
+                    <ThumbsDown className={isMobile ? "h-4 w-4" : "h-3 w-3"} />
                   </button>
                   <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
-                    <Copy className="h-3 w-3" />
+                    <Copy className={isMobile ? "h-4 w-4" : "h-3 w-3"} />
                   </button>
                 </div>
               )}
@@ -1269,22 +1283,28 @@ const ChatSidebar = ({
               {msg.toolCall && (
                 <div className="flex items-start">
                   <div className="bg-muted/20 border border-border/30 rounded-xl p-3 text-left w-full space-y-2 max-w-[85%] shadow-2xs">
-                    <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground">
-                      <Terminal className="h-3.5 w-3.5 text-foreground/60" />
-                      <span className="font-mono text-[9px] text-foreground/80 truncate">
+                    <div className={`flex items-center gap-1.5 font-semibold text-muted-foreground ${
+                      isMobile ? 'text-xs' : 'text-[10px]'
+                    }`}>
+                      <Terminal className={`${isMobile ? 'h-4 w-4' : 'h-3.5 w-3.5'} text-foreground/60`} />
+                      <span className={`font-mono text-foreground/80 truncate ${
+                        isMobile ? 'text-xs' : 'text-[9px]'
+                      }`}>
                         {msg.toolCall.name}(...)
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] bg-background border border-border/20 rounded p-1.5 font-mono text-foreground/60">
+                    <div className={`flex items-center justify-between bg-background border border-border/20 rounded p-1.5 font-mono text-foreground/60 ${
+                      isMobile ? 'text-xs' : 'text-[10px]'
+                    }`}>
                       <span>Parameters check</span>
                       {activeToolRun === msg.toolCall.name && !toolCompleted ? (
                         <span className="flex items-center gap-1 text-primary font-bold animate-pulse">
-                          <Loader2 className="h-2.5 w-2.5 animate-spin" /> running
+                          <Loader2 className={`${isMobile ? 'h-3 w-3' : 'h-2.5 w-2.5'} animate-spin`} /> running
                         </span>
                       ) : (
                         <span className="text-foreground/80 font-bold flex items-center gap-0.5">
-                          <CheckCircle2 className="h-3 w-3 text-foreground/50" /> success
+                          <CheckCircle2 className={`${isMobile ? 'h-3.5 w-3.5' : 'h-3 w-3'} text-foreground/50`} /> success
                         </span>
                       )}
                     </div>
@@ -1299,9 +1319,9 @@ const ChatSidebar = ({
         {isTyping && (
           <div className="flex items-start justify-start">
             <div className="flex items-center gap-1 bg-muted/10 border border-border/25 rounded-2xl px-4 py-2.5 w-fit">
-              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              <span className={`bg-foreground/35 rounded-full animate-bounce ${isMobile ? 'w-2 h-2' : 'w-1.5 h-1.5'}`} style={{ animationDelay: '0ms' }} />
+              <span className={`bg-foreground/35 rounded-full animate-bounce ${isMobile ? 'w-2 h-2' : 'w-1.5 h-1.5'}`} style={{ animationDelay: '150ms' }} />
+              <span className={`bg-foreground/35 rounded-full animate-bounce ${isMobile ? 'w-2 h-2' : 'w-1.5 h-1.5'}`} style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}
@@ -1313,7 +1333,9 @@ const ChatSidebar = ({
           <div className="relative flex flex-1 items-center">
             <textarea 
               placeholder="Sign up to chat with Jam" 
-              className="placeholder:text-muted-foreground/40 m-1 flex min-h-[36px] w-full resize-none rounded-md border-none bg-transparent p-0 text-xs leading-snug focus-visible:outline-none disabled:cursor-not-allowed" 
+              className={`placeholder:text-muted-foreground/40 m-1 flex min-h-[36px] w-full resize-none rounded-md border-none bg-transparent p-0 leading-snug focus-visible:outline-none disabled:cursor-not-allowed ${
+                isMobile ? 'text-base' : 'text-xs'
+              }`} 
               disabled 
               style={{ height: '36px' }} 
             />
@@ -1346,11 +1368,13 @@ const ChatSidebar = ({
 const WorkflowDiagram = ({ 
   steps, 
   nodeStates,
-  darkMode
+  darkMode,
+  isMobile = false
 }: { 
   steps: any[]; 
   nodeStates: Record<string, 'idle' | 'running' | 'completed'>;
   darkMode: boolean;
+  isMobile?: boolean;
 }) => {
   return (
     <div 
@@ -1497,33 +1521,37 @@ const WorkflowDiagram = ({
                 {/* Upper portion */}
                 <div className="bg-muted/10 h-[90px] overflow-hidden flex flex-col p-2 select-none border-b border-border/40">
                   <div className="flex items-center gap-1.5 mb-1.5 flex-shrink-0">
-                    <span className="text-foreground/60 text-[11px] font-semibold uppercase tracking-wider">
+                    <span className={`text-foreground/60 font-semibold uppercase tracking-wider ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
                       {isCompleted ? 'Step Complete' : isRunning ? 'Executing' : 'Waiting'}
                     </span>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center text-center px-2">
                     {isCompleted ? (
-                      <span className="text-foreground/80 text-xs font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[240px] truncate shadow-2xs">
+                      <span className={`text-foreground/80 font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[240px] truncate shadow-2xs ${
+                        isMobile ? 'text-sm' : 'text-xs'
+                      }`}>
                         {node.output}
                       </span>
                     ) : isRunning ? (
-                      <div className="flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono text-xs">
-                        <Loader2 className="h-3 w-3 animate-spin text-foreground/50" /> running agent...
+                      <div className={`flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono ${
+                        isMobile ? 'text-sm' : 'text-xs'
+                      }`}>
+                        <Loader2 className={`${isMobile ? 'h-3.5 w-3.5' : 'h-3 w-3'} animate-spin text-foreground/50`} /> running agent...
                       </div>
                     ) : (
-                      <span className="text-foreground/30 text-xs italic">Queued in sequence</span>
+                      <span className={`text-foreground/30 italic ${isMobile ? 'text-sm' : 'text-xs'}`}>Queued in sequence</span>
                     )}
                   </div>
                 </div>
 
                 {/* Lower portion */}
                 <div className="px-4 py-2.5 bg-card flex flex-col justify-center flex-1">
-                  <div className="text-[15px] font-bold text-foreground truncate leading-tight">
+                  <div className={`font-bold text-foreground truncate leading-tight ${isMobile ? 'text-[17px]' : 'text-[15px]'}`}>
                     {node.label}
                   </div>
                   <div className="flex items-center justify-between mt-1.5 gap-2">
-                    <span className="text-xs text-muted-foreground truncate flex-1 font-normal">
+                    <span className={`text-muted-foreground truncate flex-1 font-normal ${isMobile ? 'text-sm' : 'text-xs'}`}>
                       {node.category}
                     </span>
                     <div className="flex items-center shrink-0">
