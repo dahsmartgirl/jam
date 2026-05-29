@@ -33,6 +33,21 @@ import {
   ThumbsUp,
   ThumbsDown
 } from 'lucide-react';
+import { 
+  ReactFlow, 
+  Background, 
+  Handle, 
+  Position, 
+  MarkerType,
+  Node as FlowNode,
+  Edge,
+  ReactFlowProvider,
+  useReactFlow,
+  getBezierPath,
+  BaseEdge,
+  EdgeProps
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 interface WorkflowCanvasProps {
   activeTab: string; // 'seo' | 'social' | 'prospects' | 'emails' | 'audits'
@@ -1448,7 +1463,226 @@ const ChatSidebar = ({
   );
 };
 
-// Workflow Diagram Panel (Custom flowchart layout, responsive SVG lines)
+// Custom edge component with 0.5px grey line and brand-colored bursts
+const AnimatedBezierEdge = ({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) => {
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetPosition,
+    targetX,
+    targetY,
+  });
+
+  return (
+    <>
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={{ ...style, stroke: '#94a3b8', strokeWidth: 0.5 }}
+        markerEnd={markerEnd}
+      />
+      <path
+        d={edgePath}
+        fill="none"
+        stroke="var(--primary)"
+        strokeWidth={1.2}
+        strokeDasharray="8 35"
+        className="animate-edge-burst"
+      />
+    </>
+  );
+};
+
+const edgeTypes = {
+  custom: AnimatedBezierEdge,
+};
+
+const WorkflowNode = ({ data }: any) => {
+  const { label, category, output, status } = data;
+  const isCompleted = status === 'completed';
+  const isRunning = status === 'running';
+
+  const statusColor = isCompleted 
+    ? 'bg-blue-500' 
+    : isRunning 
+      ? 'bg-amber-500 animate-pulse' 
+      : 'bg-muted-foreground/35';
+
+  return (
+    <div className="group relative">
+      {/* Target Handle (Left) */}
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        className="!w-2.5 !h-2.5 !bg-muted-foreground/30 !border-2 !border-background target connectable" 
+      />
+
+      {/* Card Body - Borderless Premium Glassmorphism like CustomAutomations */}
+      <div 
+        className={`relative rounded-xl overflow-hidden transition-all duration-300 ease-out bg-card/85 dark:bg-[#101010]/85 backdrop-blur-md shadow-[0_4px_20px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.35)] flex flex-col border border-border/10 ${isRunning ? 'ring-1 ring-primary/45 border-primary/20' : ''} ${!isCompleted && !isRunning ? 'opacity-70' : ''}`}
+        style={{ width: 240, height: 160 }}
+      >
+        {/* Upper portion */}
+        <div className="bg-muted/15 dark:bg-[#101010]/20 h-[90px] overflow-hidden flex flex-col p-3 text-center justify-center">
+          <div className="flex items-center gap-1.5 mb-1.5 justify-center flex-shrink-0">
+            <span className="text-foreground/40 font-semibold uppercase tracking-wider text-[8px]">
+              {isCompleted ? 'Step Complete' : isRunning ? 'Executing' : 'Waiting'}
+            </span>
+          </div>
+
+          <div className="flex-1 flex flex-col justify-center items-center">
+            {isCompleted ? (
+              <span className="text-foreground/80 font-mono leading-normal font-normal bg-background/50 dark:bg-[#101010]/50 border border-border/30 rounded py-0.5 px-2 max-w-[200px] truncate shadow-2xs text-[9px]">
+                {output}
+              </span>
+            ) : isRunning ? (
+              <div className="flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono text-[9px]">
+                <Loader2 className="h-3 w-3 animate-spin text-foreground/50" /> running agent...
+              </div>
+            ) : (
+              <span className="text-foreground/30 italic text-[9px]">Queued in sequence</span>
+            )}
+          </div>
+        </div>
+
+        {/* Lower portion */}
+        <div className="px-4 py-2.5 bg-card/25 flex flex-col justify-center flex-1">
+          <div className="text-[13px] font-semibold text-foreground truncate leading-tight">
+            {label}
+          </div>
+          <div className="flex items-center justify-between mt-1.5 gap-2">
+            <span className="text-xs text-muted-foreground/60 truncate flex-1">
+              {category}
+            </span>
+            <div className="flex items-center shrink-0">
+              <div className={`w-2 h-2 rounded-full ${statusColor}`} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Source Handle (Right) */}
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className="!w-2.5 !h-2.5 !bg-muted-foreground/30 !border-2 !border-background source connectable" 
+      />
+    </div>
+  );
+};
+
+const workflowNodeTypes = {
+  workflowNode: WorkflowNode,
+};
+
+const WorkflowFlowInner = ({
+  steps,
+  nodeStates,
+  darkMode,
+  isMobile
+}: {
+  steps: any[];
+  nodeStates: Record<string, 'idle' | 'running' | 'completed'>;
+  darkMode: boolean;
+  isMobile: boolean;
+}) => {
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
+
+  const nodes: FlowNode[] = useMemo(() => {
+    return steps.map((step, idx) => ({
+      id: step.id,
+      type: 'workflowNode',
+      position: { x: 50 + idx * 300, y: 80 },
+      data: {
+        label: step.label,
+        category: step.category,
+        output: step.output,
+        status: nodeStates[step.id] || 'idle'
+      }
+    }));
+  }, [steps, nodeStates]);
+
+  const edges: Edge[] = useMemo(() => {
+    const defaultEdgeOptions = {
+      type: 'custom',
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: darkMode ? '#f43f5e' : '#c21d4c',
+      },
+    };
+
+    const edgeList: Edge[] = [];
+    for (let i = 0; i < steps.length - 1; i++) {
+      const sourceState = nodeStates[steps[i].id];
+      const isFinished = sourceState === 'completed';
+
+      edgeList.push({
+        id: `e-${steps[i].id}-${steps[i+1].id}`,
+        source: steps[i].id,
+        target: steps[i+1].id,
+        ...defaultEdgeOptions,
+        style: isFinished ? { stroke: darkMode ? '#f2f1f3' : '#101010', strokeWidth: 1 } : { stroke: '#94a3b8', strokeWidth: 0.5 }
+      });
+    }
+    return edgeList;
+  }, [steps, nodeStates, darkMode]);
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-background">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={workflowNodeTypes}
+        edgeTypes={edgeTypes}
+        defaultViewport={{ x: isMobile ? 20 : 80, y: isMobile ? 40 : 50, zoom: isMobile ? 0.85 : 1.15 }}
+        colorMode={darkMode ? 'dark' : 'light'}
+        nodesDraggable={true}
+        nodesConnectable={false}
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background gap={16} size={1} />
+      </ReactFlow>
+
+      {/* Floating Canvas Bottom Toolbar - Aesthetic Controls on the left hand side */}
+      <div className="absolute bottom-4 left-4 z-10 flex items-center gap-1.5 bg-background/70 dark:bg-[#101010]/70 backdrop-blur-md border border-border/40 rounded-full px-3 py-1.5 shadow-lg">
+        <button 
+          onClick={() => zoomIn()} 
+          className="w-6 h-6 rounded-full flex items-center justify-center bg-card hover:bg-accent text-foreground transition-all duration-150 cursor-pointer border border-border/10 active:scale-90"
+          title="Zoom In"
+        >
+          <Plus className="w-3 h-3" />
+        </button>
+        <button 
+          onClick={() => zoomOut()} 
+          className="w-6 h-6 rounded-full flex items-center justify-center bg-card hover:bg-accent text-foreground transition-all duration-150 cursor-pointer border border-border/10 active:scale-90"
+          title="Zoom Out"
+        >
+          <span className="text-xs font-bold leading-none select-none">-</span>
+        </button>
+        <button 
+          onClick={() => fitView({ duration: 800 })} 
+          className="w-6 h-6 rounded-full flex items-center justify-center bg-card hover:bg-accent text-foreground transition-all duration-150 cursor-pointer border border-border/10 active:scale-90"
+          title="Fit View"
+        >
+          <RotateCcw className="w-3 h-3" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Workflow Diagram Panel (React Flow version)
 const WorkflowDiagram = ({ 
   steps, 
   nodeStates,
@@ -1461,203 +1695,41 @@ const WorkflowDiagram = ({
   isMobile?: boolean;
 }) => {
   return (
-    <div 
-      className="h-full w-full min-h-0 flex-1 relative overflow-auto bg-background p-6 flex items-center justify-start xl:justify-center scrollbar-thin select-none"
-      style={{
-        backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)',
-        backgroundSize: '16px 16px',
-        backgroundPosition: 'center'
-      }}
-    >
-      <div className="relative w-[1320px] h-[360px] flex-shrink-0">
-        
-        {/* SVG connection lines with animated dashes */}
-        <svg className="absolute inset-0 pointer-events-none w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <marker
-              id="arrow-workflow"
-              viewBox="0 0 10 10"
-              refX="6"
-              refY="5"
-              markerWidth="6"
-              markerHeight="6"
-              orient="auto-start-reverse"
-            >
-              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill={darkMode ? '#f2f1f3' : '#101010'} />
-            </marker>
-            <style>{`
-              @keyframes flowDash {
-                0% { stroke-dashoffset: 24; }
-                100% { stroke-dashoffset: 0; }
-              }
-              .animate-flow-dash {
-                animation: flowDash 1.2s linear infinite;
-              }
-            `}</style>
-          </defs>
-          
-          {steps.map((step, idx) => {
-            if (idx === steps.length - 1) return null;
-            const startX = 290 + idx * 330;
-            const endX = 350 + idx * 330;
-            const sourceState = nodeStates[step.id];
-            const isFinished = sourceState === 'completed';
-
-            return (
-              <path 
-                key={step.id}
-                d={`M ${startX} 180 L ${endX} 180`} 
-                fill="none" 
-                stroke={isFinished ? (darkMode ? '#f2f1f3' : '#101010') : (darkMode ? '#222024' : '#eae8e3')} 
-                strokeWidth="1.5" 
-                strokeDasharray={isFinished ? "4 4" : "0"} 
-                markerEnd="url(#arrow-workflow)" 
-                className={isFinished ? "animate-flow-dash" : ""}
-              />
-            );
-          })}
-        </svg>
-
-        {/* Nodes */}
-        {steps.map((node, index) => {
-          const leftOffset = 20 + index * 330;
-          const status = nodeStates[node.id] || 'idle';
-          const isCompleted = status === 'completed';
-          const isRunning = status === 'running';
-
-          const cardBorderClass = isRunning 
-            ? 'border-foreground shadow-xs ring-1 ring-foreground/15' 
-            : isCompleted 
-              ? 'border-border shadow-2xs' 
-              : 'border-border/40 opacity-60';
-
-          const dotColorClass = isCompleted 
-            ? 'bg-foreground' 
-            : isRunning 
-              ? 'bg-primary animate-pulse' 
-              : 'bg-muted-foreground/30';
-
-          return (
-            <div 
-              key={node.id}
-              className="absolute text-left group transition-all duration-300"
-              style={{ left: `${leftOffset}px`, top: '90px', width: '270px', height: '180px' }}
-            >
-              {/* Target Handle Dot (Left) */}
-              {index > 0 && (
-                <div 
-                  className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background z-10 transition-colors ${
-                    isCompleted ? 'bg-foreground' : 'bg-muted/40'
-                  }`} 
-                />
-              )}
-
-              {/* Left Hover buttons */}
-              <div className="absolute -top-3.5 -left-3.5 z-30 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto">
-                <button 
-                  title="View Details" 
-                  className="w-7 h-7 rounded-full flex items-center justify-center bg-background border border-border shadow-xs hover:bg-accent hover:border-accent-foreground/10 transition-colors duration-150 cursor-pointer"
-                >
-                  <Eye className="w-3.5 h-3.5 text-foreground/80" />
-                </button>
-              </div>
-
-              {/* Top Actions Panel */}
-              <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-background border border-border rounded-lg shadow-sm px-1.5 py-1 pointer-events-auto">
-                <button 
-                  type="button" 
-                  className="flex items-center gap-1 px-1.5 py-1 rounded-md transition-colors duration-150 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-medium">Rename</span>
-                </button>
-                <button 
-                  type="button" 
-                  className="flex items-center gap-1 px-1.5 py-1 rounded-md transition-colors duration-150 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-medium">Duplicate</span>
-                </button>
-                <button 
-                  type="button" 
-                  className="flex items-center gap-1 px-1.5 py-1 rounded-md transition-colors duration-150 hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-medium">Delete</span>
-                </button>
-              </div>
-
-              {/* Add node after button */}
-              {index < steps.length - 1 && (
-                <button 
-                  type="button" 
-                  title="Add node after" 
-                  className="absolute top-1/2 -translate-y-1/2 -right-3 z-30 w-6 h-6 rounded-full bg-background border border-border shadow-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent hover:border-accent-foreground/10 cursor-pointer"
-                >
-                  <Plus className="w-3.5 h-3.5 text-foreground" />
-                </button>
-              )}
-
-              {/* Main Card Body */}
-              <div 
-                className={`relative w-full h-full rounded-xl border overflow-hidden transition-all duration-300 bg-card hover:border-border/80 cursor-pointer flex flex-col ${cardBorderClass}`}
-              >
-                {/* Upper portion */}
-                <div className="bg-muted/10 h-[90px] overflow-hidden flex flex-col p-2 select-none border-b border-border/40">
-                  <div className="flex items-center gap-1.5 mb-1.5 flex-shrink-0">
-                    <span className={`text-foreground/60 font-semibold uppercase tracking-wider ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
-                      {isCompleted ? 'Step Complete' : isRunning ? 'Executing' : 'Waiting'}
-                    </span>
-                  </div>
-
-                  <div className="flex-1 flex flex-col justify-center text-center px-2">
-                    {isCompleted ? (
-                      <span className={`text-foreground/80 font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[240px] truncate shadow-2xs ${
-                        isMobile ? 'text-sm' : 'text-xs'
-                      }`}>
-                        {node.output}
-                      </span>
-                    ) : isRunning ? (
-                      <div className={`flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono ${
-                        isMobile ? 'text-sm' : 'text-xs'
-                      }`}>
-                        <Loader2 className={`${isMobile ? 'h-3.5 w-3.5' : 'h-3 w-3'} animate-spin text-foreground/50`} /> running agent...
-                      </div>
-                    ) : (
-                      <span className={`text-foreground/30 italic ${isMobile ? 'text-sm' : 'text-xs'}`}>Queued in sequence</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Lower portion */}
-                <div className="px-4 py-2.5 bg-card flex flex-col justify-center flex-1">
-                  <div className={`font-bold text-foreground truncate leading-tight ${isMobile ? 'text-[17px]' : 'text-[15px]'}`}>
-                    {node.label}
-                  </div>
-                  <div className="flex items-center justify-between mt-1.5 gap-2">
-                    <span className={`text-muted-foreground truncate flex-1 font-normal ${isMobile ? 'text-sm' : 'text-xs'}`}>
-                      {node.category}
-                    </span>
-                    <div className="flex items-center shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${dotColorClass}`} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Source Handle Dot (Right) */}
-              {index < steps.length - 1 && (
-                <div 
-                  className={`absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background z-10 transition-colors ${
-                    isCompleted ? 'bg-foreground' : 'bg-muted/40'
-                  }`} 
-                />
-              )}
-            </div>
-          );
-        })}
-
-      </div>
+    <div className="h-full w-full select-none relative overflow-hidden bg-background">
+      <style>{`
+        @keyframes edgeBurst {
+          from {
+            stroke-dashoffset: 45;
+          }
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+        .animate-edge-burst {
+          animation: edgeBurst 1.8s linear infinite;
+          opacity: 0.95;
+        }
+        .react-flow__node {
+          border: none !important;
+          outline: none !important;
+          background: transparent !important;
+          padding: 0 !important;
+        }
+        .react-flow__node:focus, .react-flow__node:focus-visible {
+          outline: none !important;
+        }
+        .react-flow__attribution {
+          display: none !important;
+        }
+      `}</style>
+      <ReactFlowProvider>
+        <WorkflowFlowInner 
+          steps={steps} 
+          nodeStates={nodeStates} 
+          darkMode={darkMode} 
+          isMobile={isMobile} 
+        />
+      </ReactFlowProvider>
     </div>
   );
 };

@@ -52,17 +52,17 @@ export default function VisibilityScore() {
   const chartData = generateData();
 
   // Extend chart to the end of the SVG grid (x = 600)
-  const getX = (index: number) => 50 + (index / 28) * 550;
+  const getX = (index: number, startX: number = 50) => startX + (index / 28) * (600 - startX);
   // Scaled Y up to 100% (height 220px, from y=240 at 0% to y=20 at 100%)
   const getY = (val: number) => 240 - (val / 100) * 220;
 
   // Render a smooth line using cubic bezier curves
-  const makeSmoothPath = (key: 'chatgpt' | 'perplexity' | 'gemini' | 'claude') => {
-    let path = `M ${getX(0)} ${getY(chartData[0][key])}`;
+  const makeSmoothPath = (key: 'chatgpt' | 'perplexity' | 'gemini' | 'claude', startX: number = 50) => {
+    let path = `M ${getX(0, startX)} ${getY(chartData[0][key])}`;
     for (let i = 0; i < chartData.length - 1; i++) {
-      const x0 = getX(i);
+      const x0 = getX(i, startX);
       const y0 = getY(chartData[i][key]);
-      const x1 = getX(i + 1);
+      const x1 = getX(i + 1, startX);
       const y1 = getY(chartData[i + 1][key]);
       
       // Control points for smooth horizontal tangents
@@ -77,17 +77,21 @@ export default function VisibilityScore() {
   };
 
   // Tooltip positioning variables
-  let tooltipLeft = '';
+  let tooltipLeftMobile = '';
+  let tooltipLeftDesktop = '';
   let tooltipTransform = 'translateX(-50%)';
   if (hoveredIndex !== null) {
     if (hoveredIndex < 5) {
       tooltipTransform = 'none';
-      tooltipLeft = '55px';
+      tooltipLeftMobile = '55px';
+      tooltipLeftDesktop = '41px';
     } else if (hoveredIndex > 23) {
       tooltipTransform = 'translateX(-100%)';
-      tooltipLeft = 'calc(100% - 10px)';
+      tooltipLeftMobile = 'calc(100% - 10px)';
+      tooltipLeftDesktop = 'calc(100% - 10px)';
     } else {
-      tooltipLeft = `${(getX(hoveredIndex) / 600) * 100}%`;
+      tooltipLeftMobile = `${(getX(hoveredIndex, 50) / 600) * 100}%`;
+      tooltipLeftDesktop = `${(getX(hoveredIndex, 36) / 600) * 100}%`;
     }
   }
 
@@ -127,14 +131,15 @@ export default function VisibilityScore() {
               </div>
 
               {/* Chart Area wrapper */}
-              <div className="mt-6 h-auto aspect-[600/270] w-full md:h-[300px] md:aspect-auto">
+              <div className="mt-6 h-auto aspect-[600/270] w-full">
                 <div 
                   data-slot="chart" 
                   data-chart="chart-_R_hhlav5tlb_"
                   className="aspect-auto h-full w-full relative"
                 >
+                  {/* MOBILE SVG (md:hidden) - keeping original parameters */}
                   <svg 
-                    className="w-full h-full cursor-crosshair" 
+                    className="w-full h-full cursor-crosshair md:hidden" 
                     viewBox="0 0 600 270" 
                     xmlns="http://www.w3.org/2000/svg"
                     onMouseMove={(e) => {
@@ -167,9 +172,9 @@ export default function VisibilityScore() {
                     {/* Vertical hover line indicator (0.5px light grey) */}
                     {hoveredIndex !== null && (
                       <line 
-                        x1={getX(hoveredIndex)} 
+                        x1={getX(hoveredIndex, 50)} 
                         y1="20" 
-                        x2={getX(hoveredIndex)} 
+                        x2={getX(hoveredIndex, 50)} 
                         y2="240" 
                         stroke="rgba(156, 163, 175, 0.4)" 
                         strokeWidth="0.5" 
@@ -177,11 +182,11 @@ export default function VisibilityScore() {
                       />
                     )}
 
-                    {/* Platform paths - smooth curves, thickness reduced to 1.5, circular ending dots removed */}
-                    <path d={makeSmoothPath('chatgpt')} fill="none" stroke={chatgptColor} strokeWidth="1.5" />
-                    <path d={makeSmoothPath('perplexity')} fill="none" stroke={perplexityColor} strokeWidth="1.5" />
-                    <path d={makeSmoothPath('gemini')} fill="none" stroke={geminiColor} strokeWidth="1.5" />
-                    <path d={makeSmoothPath('claude')} fill="none" stroke={claudeColor} strokeWidth="1.5" />
+                    {/* Platform paths */}
+                    <path d={makeSmoothPath('chatgpt', 50)} fill="none" stroke={chatgptColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('perplexity', 50)} fill="none" stroke={perplexityColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('gemini', 50)} fill="none" stroke={geminiColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('claude', 50)} fill="none" stroke={claudeColor} strokeWidth="1.5" />
 
                     {/* Left Axis Labels - shifted to left boundary, scaled up to 100% */}
                     <text x="10" y="24" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">100%</text>
@@ -191,7 +196,7 @@ export default function VisibilityScore() {
                     <text x="10" y="200" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">20%</text>
                     <text x="10" y="244" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">0%</text>
 
-                    {/* X Axis labels (extending all the way to end at x=600) */}
+                    {/* X Axis labels */}
                     <text x="50" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 1</text>
                     <text x="187.5" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 8</text>
                     <text x="325" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 15</text>
@@ -199,12 +204,125 @@ export default function VisibilityScore() {
                     <text x="600" y="258" className="text-[9px] fill-muted-foreground" textAnchor="end">May 29</text>
                   </svg>
 
-                  {/* Tooltip Card detailing all percentages */}
+                  {/* DESKTOP SVG (hidden md:block) - elongated and aligned with column names */}
+                  <svg 
+                    className="w-full h-full cursor-crosshair hidden md:block" 
+                    viewBox="0 0 600 270" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const svgX = (x / rect.width) * 600;
+                      
+                      const clampedX = Math.max(36, Math.min(600, svgX));
+                      const progress = (clampedX - 36) / 564;
+                      const index = Math.round(progress * 28);
+                      setHoveredIndex(index);
+                    }}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                  >
+                    {/* Grid Lines starting at x=36 */}
+                    <line x1="36" y1="20" x2="600" y2="20" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="36" y1="64" x2="600" y2="64" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="36" y1="108" x2="600" y2="108" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="36" y1="152" x2="600" y2="152" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="36" y1="196" x2="600" y2="196" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="36" y1="240" x2="600" y2="240" stroke="currentColor" className="text-border/60" strokeWidth="1" />
+
+                    {/* X Axis vertical lines aligned with start at 36 */}
+                    <line x1="36" y1="20" x2="36" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="177" y1="20" x2="177" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="318" y1="20" x2="318" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="459" y1="20" x2="459" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="600" y1="20" x2="600" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+
+                    {/* Vertical hover line indicator (0.5px light grey) */}
+                    {hoveredIndex !== null && (
+                      <line 
+                        x1={getX(hoveredIndex, 36)} 
+                        y1="20" 
+                        x2={getX(hoveredIndex, 36)} 
+                        y2="240" 
+                        stroke="rgba(156, 163, 175, 0.4)" 
+                        strokeWidth="0.5" 
+                        strokeDasharray="4 4"
+                      />
+                    )}
+
+                    {/* Platform paths */}
+                    <path d={makeSmoothPath('chatgpt', 36)} fill="none" stroke={chatgptColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('perplexity', 36)} fill="none" stroke={perplexityColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('gemini', 36)} fill="none" stroke={geminiColor} strokeWidth="1.5" />
+                    <path d={makeSmoothPath('claude', 36)} fill="none" stroke={claudeColor} strokeWidth="1.5" />
+
+                    {/* Left Axis Labels - aligned at absolute left edge (x=0) */}
+                    <text x="0" y="24" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">100%</text>
+                    <text x="0" y="68" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">80%</text>
+                    <text x="0" y="112" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">60%</text>
+                    <text x="0" y="156" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">40%</text>
+                    <text x="0" y="200" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">20%</text>
+                    <text x="0" y="244" className="text-[10px] font-medium fill-muted-foreground animate-none" textAnchor="start">0%</text>
+
+                    {/* X Axis labels */}
+                    <text x="36" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 1</text>
+                    <text x="177" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 8</text>
+                    <text x="318" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 15</text>
+                    <text x="459" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 22</text>
+                    <text x="600" y="258" className="text-[9px] fill-muted-foreground" textAnchor="end">May 29</text>
+                  </svg>
+
+                  {/* Tooltip Card detailing all percentages (Mobile) */}
                   {hoveredIndex !== null && (
                     <div 
-                      className="absolute z-20 pointer-events-none bg-background/95 dark:bg-zinc-950/95 border border-border/80 rounded-lg p-3 shadow-xl backdrop-blur-md transition-all duration-75 text-xs min-w-[145px]"
+                      className="absolute z-20 pointer-events-none bg-background/95 dark:bg-zinc-950/95 border border-border/80 rounded-lg p-3 shadow-xl backdrop-blur-md transition-all duration-75 text-xs min-w-[145px] md:hidden"
                       style={{
-                        left: tooltipLeft,
+                        left: tooltipLeftMobile,
+                        top: '10px',
+                        transform: tooltipTransform,
+                      }}
+                    >
+                      <div className="font-semibold text-foreground mb-1.5 border-b border-border/50 pb-1">
+                        {chartData[hoveredIndex].date}
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: chatgptColor }} />
+                            <span>ChatGPT</span>
+                          </div>
+                          <span className="font-semibold text-foreground tabular-nums">{chartData[hoveredIndex].chatgpt}%</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: perplexityColor }} />
+                            <span>Perplexity</span>
+                          </div>
+                          <span className="font-semibold text-foreground tabular-nums">{chartData[hoveredIndex].perplexity}%</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: geminiColor }} />
+                            <span>Gemini</span>
+                          </div>
+                          <span className="font-semibold text-foreground tabular-nums">{chartData[hoveredIndex].gemini}%</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: claudeColor }} />
+                            <span>Claude</span>
+                          </div>
+                          <span className="font-semibold text-foreground tabular-nums">{chartData[hoveredIndex].claude}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tooltip Card detailing all percentages (Desktop) */}
+                  {hoveredIndex !== null && (
+                    <div 
+                      className="absolute z-20 pointer-events-none bg-background/95 dark:bg-zinc-950/95 border border-border/80 rounded-lg p-3 shadow-xl backdrop-blur-md transition-all duration-75 text-xs min-w-[145px] hidden md:block"
+                      style={{
+                        left: tooltipLeftDesktop,
                         top: '10px',
                         transform: tooltipTransform,
                       }}
