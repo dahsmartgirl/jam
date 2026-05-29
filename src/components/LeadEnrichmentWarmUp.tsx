@@ -4,7 +4,7 @@ export default function LeadEnrichmentWarmUp() {
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 border-b border-border">
       {/* Column 1: Lead enrichment */}
-      <div className="relative overflow-hidden p-6 md:p-8 lg:p-10 border-border border-b md:border-r md:border-b-0 h-auto md:h-[500px] md:min-h-[500px] flex flex-col justify-between">
+      <div className="relative overflow-hidden p-6 md:p-8 lg:p-10 border-border border-b md:border-r md:border-b-0 h-auto md:h-[500px] md:min-h-[500px] flex flex-col justify-start">
         <div className="relative z-10 mb-2 max-w-none md:max-w-md">
           <span className="feature-badge">Enrichment</span>
           <h3 className="text-foreground text-2xl font-light md:text-3xl">
@@ -16,7 +16,7 @@ export default function LeadEnrichmentWarmUp() {
         </div>
 
         {/* Overlapping Cards Container */}
-        <div className="relative mt-6 flex flex-col gap-2 md:absolute md:inset-x-8 md:bottom-0 md:mt-0 md:translate-y-9 lg:inset-x-10">
+        <div className="relative mt-8 flex flex-col gap-2 w-full">
           {/* Marcus Whitfield Card */}
           <div className="border-border bg-card flex items-center gap-3 rounded-lg border px-4 py-3 opacity-40">
             <div className="bg-muted size-8 shrink-0 rounded-full flex items-center justify-center text-xs font-semibold text-muted-foreground">MW</div>

@@ -146,8 +146,6 @@ export default function InboxManager() {
           </div>
         </div>
 
-        {/* Ambient fade-out overlay */}
-        <div className="dark:from-background pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[10%] bg-gradient-to-r from-[#FAF9F5] to-transparent md:block" />
 
       </section>
     </>
