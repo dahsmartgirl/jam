@@ -6,10 +6,11 @@ export default function LeadEnrichmentWarmUp() {
       {/* Column 1: Lead enrichment */}
       <div className="relative overflow-hidden p-6 md:p-8 lg:p-10 border-border border-b md:border-r md:border-b-0 h-auto md:h-[500px] md:min-h-[500px] flex flex-col justify-between">
         <div className="relative z-10 mb-2 max-w-none md:max-w-md">
+          <span className="feature-badge">Enrichment</span>
           <h3 className="text-foreground text-2xl font-light md:text-3xl">
             Lead enrichment
           </h3>
-          <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">
+          <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
             Turn a name into a full profile, automatically.
           </p>
         </div>
@@ -107,10 +108,11 @@ export default function LeadEnrichmentWarmUp() {
       {/* Column 2: Auto warm-up */}
       <div className="relative overflow-hidden p-6 md:p-8 lg:p-10 h-auto md:h-[500px] md:min-h-[500px] flex flex-col justify-between">
         <div className="relative z-10 mb-2 max-w-none md:max-w-md">
+          <span className="feature-badge">Warm-up</span>
           <h3 className="text-foreground text-2xl font-light md:text-3xl">
             Auto warm-up
           </h3>
-          <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">
+          <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
             Mailboxes that ramp themselves to stay out of spam.
           </p>
         </div>

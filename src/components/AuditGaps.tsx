@@ -6,8 +6,9 @@ export default function AuditGaps() {
       
       {/* Title block */}
       <div className="relative z-10 max-w-none lg:max-w-[44%]">
+        <span className="feature-badge">Audit</span>
         <h3 className="text-foreground text-2xl font-light md:text-3xl">Beat your competitors</h3>
-        <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">Publish articles that get you cited.</p>
+        <p className="text-muted-foreground/60 mt-1.5 text-base font-light">Publish articles that get you cited.</p>
       </div>
 
       {/* Article preview window */}

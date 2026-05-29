@@ -96,10 +96,11 @@ export default function VisibilityScore() {
         
         {/* Left side: Heading */}
         <div className="relative z-10 lg:col-span-4">
+          <span className="feature-badge">Visibility</span>
           <h3 className="text-foreground text-2xl font-light md:text-3xl">
             Find Your Gaps
           </h3>
-          <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">
+          <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
             Find where you&#x27;re not being cited in all AI platforms.
           </p>
         </div>

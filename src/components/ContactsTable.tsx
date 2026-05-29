@@ -26,8 +26,9 @@ export default function ContactsTable() {
       
       {/* Title */}
       <div className="relative z-10 max-w-none lg:max-w-[44%]">
+        <span className="feature-badge">Leads</span>
         <h3 className="text-foreground text-2xl font-light md:text-3xl">Find warm leads</h3>
-        <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">Surface contacts already in your orbit.</p>
+        <p className="text-muted-foreground/60 mt-1.5 text-base font-light">Surface contacts already in your orbit.</p>
       </div>
 
       {/* Table Overlay container on desktop */}

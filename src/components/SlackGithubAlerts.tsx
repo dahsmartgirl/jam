@@ -6,8 +6,9 @@ export default function SlackGithubAlerts() {
       
       {/* Left side text column */}
       <div className="border-border flex flex-col justify-start border-b p-6 md:border-r md:border-b-0 md:pr-8">
+        <span className="feature-badge">Alerts</span>
         <h3 className="text-foreground text-2xl font-light md:text-3xl">Chat with Jam anywhere</h3>
-        <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">
+        <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
           Approve drafts, review PRs, and run campaigns right from Slack and GitHub.
         </p>
       </div>

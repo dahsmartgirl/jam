@@ -33,8 +33,9 @@ export default function InboxManager() {
         {/* Title Block */}
         <div className="relative z-10 md:max-w-sm">
           <div className="mb-0">
-            <h2 className="text-foreground text-2xl font-light md:text-3xl">One inbox for every account</h2>
-            <p className="text-muted-foreground/50 text-2xl font-light md:text-3xl">
+            <span className="feature-badge">Inbox</span>
+            <h3 className="text-foreground text-2xl font-light md:text-3xl">One inbox for every account</h3>
+            <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
               Connect every mailbox, triage replies, and send from one place.
             </p>
           </div>
