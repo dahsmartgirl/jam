@@ -9,6 +9,8 @@ import {
   Trash2,
   ChevronDown,
   PanelRight,
+  PanelLeftClose,
+  LayoutGrid,
   Loader2,
   Sparkles,
   Send,
@@ -26,11 +28,14 @@ import {
   Github,
   Globe,
   FileText,
-  ImagePlus
+  ImagePlus,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 
 interface WorkflowCanvasProps {
   activeTab: string; // 'seo' | 'social' | 'prospects' | 'emails' | 'audits'
+  setActiveTab: (tab: string) => void;
   darkMode: boolean;
 }
 
@@ -375,14 +380,14 @@ const SCENARIOS = [
   }
 ];
 
-export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasProps) {
+export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: WorkflowCanvasProps) {
   // Find scenario based on active tab
   const scenario = useMemo(() => {
     return SCENARIOS.find(s => s.tabKey === activeTab) || SCENARIOS[0];
   }, [activeTab]);
 
   // Mobile navigation tab inside mockup
-  const [mobileSubTab, setMobileSubTab] = useState<'chat' | 'preview' | 'workflow'>('workflow');
+  const [mobileSubTab, setMobileSubTab] = useState<'chat' | 'preview' | 'workflow'>('preview');
 
   // Interactive Playback State
   const [revealedMessages, setRevealedMessages] = useState<any[]>([]);
@@ -393,7 +398,7 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
   const [playbackKey, setPlaybackKey] = useState<number>(0); // force reset
 
   // Right Side Panel Tabs
-  const [activeRightTab, setActiveRightTab] = useState<'workflows' | 'preview'>('workflows');
+  const [activeRightTab, setActiveRightTab] = useState<'workflows' | 'preview'>('preview');
   const hasWorkflow = scenario.workflowSteps.length > 0;
 
   // Track executing node inside workflow diagram
@@ -402,17 +407,30 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
   // Active email draft tab state
   const [selectedEmailIdx, setSelectedEmailIdx] = useState<number>(0);
 
+  // Collapsible sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+
+  // Scenario dropdown state
+  const [isScenarioDropdownOpen, setIsScenarioDropdownOpen] = useState<boolean>(false);
+
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsScenarioDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Set default tabs depending on scenario workflow availability
   useEffect(() => {
-    if (hasWorkflow) {
-      setActiveRightTab('workflows');
-      setMobileSubTab('workflow');
-    } else {
-      setActiveRightTab('preview');
-      setMobileSubTab('preview');
-    }
+    setActiveRightTab('preview');
+    setMobileSubTab('preview');
   }, [scenario, hasWorkflow]);
 
   // Restart playback when tab changes
@@ -576,19 +594,19 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
             {/* Top Score Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-border/50 pb-5">
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Citation Score</span>
-                <span className="text-3xl font-light text-primary mt-1">7%</span>
-                <span className="text-[10px] text-muted-foreground/70 mt-1">13 of 184 responses</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Citation Score</span>
+                <span className="text-3xl font-light text-foreground mt-1">7%</span>
+                <span className="text-[10px] text-muted-foreground/80 mt-1">13 of 184 responses</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Identified Gaps</span>
-                <span className="text-3xl font-light text-amber-500 mt-1">6 Gaps</span>
-                <span className="text-[10px] text-muted-foreground/70 mt-1">Stale & missing content</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Identified Gaps</span>
+                <span className="text-3xl font-light text-foreground mt-1">6 Gaps</span>
+                <span className="text-[10px] text-muted-foreground/80 mt-1">Stale & missing content</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Content Freshness</span>
-                <span className="text-3xl font-light text-emerald-500 mt-1">68%</span>
-                <span className="text-[10px] text-muted-foreground/70 mt-1">19 of 28 pages fresh</span>
+                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Content Freshness</span>
+                <span className="text-3xl font-light text-foreground mt-1">68%</span>
+                <span className="text-[10px] text-muted-foreground/80 mt-1">19 of 28 pages fresh</span>
               </div>
             </div>
 
@@ -599,15 +617,15 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                 {Object.entries(report?.platformBreakdown || {}).map(([platform, stats]: [string, any]) => {
                   const percent = Math.round((stats.ourSiteCited / stats.total) * 100);
                   return (
-                    <div key={platform} className="bg-muted/20 border border-border/40 p-3 rounded-lg flex flex-col">
+                    <div key={platform} className="bg-muted/10 border border-border/30 p-3 rounded-lg flex flex-col">
                       <div className="flex justify-between items-center text-xs font-semibold">
                         <span>{platform}</span>
-                        <span className="text-primary">{percent}%</span>
+                        <span className="text-foreground">{percent}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden mt-2">
-                        <div className="h-full bg-primary rounded-full" style={{ width: `${percent}%` }} />
+                      <div className="h-1.5 w-full bg-muted/40 rounded-full overflow-hidden mt-2">
+                        <div className="h-full bg-foreground rounded-full" style={{ width: `${percent}%` }} />
                       </div>
-                      <span className="text-[9px] text-muted-foreground mt-1.5">{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
+                      <span className="text-[9px] text-muted-foreground/70 mt-1.5">{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
                     </div>
                   );
                 })}
@@ -622,12 +640,12 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                   {report?.citedBrands.map((b: any) => (
                     <div key={b.brand} className="space-y-1 text-xs">
                       <div className="flex justify-between font-medium">
-                        <span className={b.brand.includes('Us') ? 'text-primary font-bold' : ''}>{b.brand}</span>
+                        <span className={b.brand.includes('Us') ? 'text-foreground font-bold' : 'text-foreground/75'}>{b.brand}</span>
                         <span className="text-muted-foreground">{b.count} mentions</span>
                       </div>
                       <div className="h-2 w-full bg-muted/40 rounded-full overflow-hidden">
                         <div 
-                          className={`h-full rounded-full ${b.brand.includes('Us') ? 'bg-primary' : 'bg-foreground/35'}`} 
+                          className={`h-full rounded-full ${b.brand.includes('Us') ? 'bg-foreground' : 'bg-foreground/20'}`} 
                           style={{ width: `${b.pct}%` }} 
                         />
                       </div>
@@ -639,11 +657,11 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
               {/* Gaps List */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Identified Opportunity Gaps</h4>
-                <div className="border border-border rounded-xl bg-card p-4 text-xs divide-y divide-border/40 max-h-[220px] overflow-y-auto">
+                <div className="border border-border rounded-xl bg-card p-4 text-xs divide-y divide-border/30 max-h-[220px] overflow-y-auto">
                   {report?.gaps.map((gap: any, i: number) => (
                     <div key={i} className="py-2.5 first:pt-0 last:pb-0">
                       <div className="font-semibold text-foreground truncate">{gap.question}</div>
-                      <div className="text-muted-foreground text-[10px] mt-0.5">{gap.opportunity}</div>
+                      <div className="text-muted-foreground/80 text-[10px] mt-0.5">{gap.opportunity}</div>
                     </div>
                   ))}
                 </div>
@@ -659,33 +677,31 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
           <div className="p-4 overflow-y-auto h-full text-left bg-background text-foreground space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-border/50">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Social Lead Stream</span>
-              <span className="text-[10px] bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-full">{report?.totalFound} hits found</span>
+              <span className="text-[9px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} hits found</span>
             </div>
 
             <div className="space-y-3.5">
               {report?.posts.map((post: any) => (
-                <div key={post.id} className="border border-border rounded-xl bg-card p-4 hover:shadow-xs transition-shadow">
+                <div key={post.id} className="border border-border rounded-xl bg-card p-4 hover:shadow-2xs transition-shadow">
                   {/* Post Header */}
                   <div className="flex items-center gap-2 text-xs">
-                    {post.platform === 'twitter' ? (
-                      <div className="bg-[#1DA1F2]/10 text-[#1DA1F2] font-mono font-bold text-[10px] px-2 py-0.5 rounded">X/Twitter</div>
-                    ) : (
-                      <div className="bg-[#FF4500]/10 text-[#FF4500] font-mono font-bold text-[10px] px-2 py-0.5 rounded">Reddit</div>
-                    )}
+                    <div className="bg-muted text-foreground/80 font-mono text-[9px] px-2 py-0.5 rounded border border-border/30">
+                      {post.platform === 'twitter' ? 'X/Twitter' : 'Reddit'}
+                    </div>
                     <span className="font-semibold text-foreground">{post.authorName}</span>
-                    {post.authorHandle && <span className="text-muted-foreground text-[10px]">@{post.authorHandle}</span>}
-                    {post.subreddit && <span className="text-primary text-[10px] font-semibold">{post.subreddit}</span>}
-                    <span className="text-muted-foreground/50 text-[10px] ml-auto">
+                    {post.authorHandle && <span className="text-muted-foreground/75 text-[10px]">@{post.authorHandle}</span>}
+                    {post.subreddit && <span className="text-foreground/70 font-mono text-[9px] font-semibold">{post.subreddit}</span>}
+                    <span className="text-muted-foreground/50 text-[10px] ml-auto font-mono">
                       {post.followers ? `Followers: ${post.followers}` : `Ratio: ${post.upvoteRatio}`}
                     </span>
                   </div>
 
                   {/* Post Content */}
                   {post.title && <div className="font-bold text-xs mt-2 text-foreground">{post.title}</div>}
-                  <p className="text-xs text-foreground/80 mt-1.5 leading-relaxed font-light">{post.text}</p>
+                  <p className="text-xs text-foreground/85 mt-1.5 leading-relaxed font-normal">{post.text}</p>
 
                   {/* Engagement Footer */}
-                  <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground border-t border-border/30 pt-2 font-mono">
+                  <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground/80 border-t border-border/30 pt-2 font-mono">
                     <span>Likes: {post.engagement.likes}</span>
                     <span>Comments: {post.engagement.comments}</span>
                     {post.engagement.shares !== undefined && <span>Retweets: {post.engagement.shares}</span>}
@@ -703,13 +719,13 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
           <div className="p-4 overflow-y-auto h-full text-left bg-background text-foreground flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-border/50 flex-shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Prospecting CRM list</span>
-              <span className="text-[10px] bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-full">{report?.totalFound} leads enriched</span>
+              <span className="text-[9px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} leads enriched</span>
             </div>
 
             <div className="flex-1 overflow-auto mt-3">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-muted/40 border-b border-border/80 text-muted-foreground font-semibold">
+                  <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                     <th className="p-2 w-8"></th>
                     <th className="p-2">Name</th>
                     <th className="p-2">Company</th>
@@ -720,16 +736,16 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   {report?.contacts.map((c: any) => (
-                    <tr key={c.id} className="hover:bg-muted/10">
+                    <tr key={c.id} className="hover:bg-muted/10 transition-colors">
                       <td className="p-2">
-                        <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-[9px] font-mono">{c.initials}</div>
+                        <div className="w-6 h-6 rounded-full bg-muted text-foreground border border-border/40 flex items-center justify-center font-bold text-[9px] font-mono">{c.initials}</div>
                       </td>
                       <td className="p-2 font-semibold text-foreground">{c.name}</td>
                       <td className="p-2 text-foreground/80">{c.company}</td>
                       <td className="p-2 text-muted-foreground">{c.title}</td>
                       <td className="p-2 text-muted-foreground/60 text-[10px]">{c.location}</td>
                       <td className="p-2 text-center">
-                        <a href="#" className="text-primary hover:opacity-80"><Globe className="h-3.5 w-3.5" /></a>
+                        <a href="#" className="text-foreground/60 hover:text-foreground transition-colors"><Globe className="h-3.5 w-3.5" /></a>
                       </td>
                     </tr>
                   ))}
@@ -746,18 +762,18 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
         return (
           <div className="h-full flex text-left bg-background text-foreground select-none">
             {/* Email Drafts List Sidebar */}
-            <div className="w-2/5 border-r border-border flex flex-col h-full bg-muted/10">
+            <div className="w-2/5 border-r border-border flex flex-col h-full bg-muted/5">
               <div className="p-3 border-b border-border text-xs font-semibold text-muted-foreground flex justify-between items-center">
                 <span>Leads Queue</span>
-                <span>{report?.totalCount} drafts</span>
+                <span className="font-mono text-[10px]">{report?.totalCount} drafts</span>
               </div>
-              <div className="flex-1 overflow-y-auto divide-y divide-border/40">
+              <div className="flex-1 overflow-y-auto divide-y divide-border/30">
                 {report?.drafts.map((d: any, idx: number) => (
                   <button
                     key={d.id}
                     onClick={() => setSelectedEmailIdx(idx)}
                     className={`w-full p-3 flex flex-col gap-0.5 text-left cursor-pointer transition-colors ${
-                      selectedEmailIdx === idx ? 'bg-primary/5 border-l-4 border-primary' : 'hover:bg-muted/20'
+                      selectedEmailIdx === idx ? 'bg-muted/20 border-l-4 border-foreground' : 'hover:bg-muted/10'
                     }`}
                   >
                     <span className="text-xs font-bold text-foreground">{d.toName}</span>
@@ -780,15 +796,15 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-12 font-medium">Subject:</span>
-                      <span className="font-semibold font-mono text-primary">{currentDraft.subject}</span>
+                      <span className="font-semibold font-mono text-foreground">{currentDraft.subject}</span>
                     </div>
                   </div>
-                  <div className="flex-1 bg-muted/10 border border-border/40 rounded-xl p-4 font-mono text-[10.5px] leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px]">
+                  <div className="flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono text-[10px] leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px]">
                     {currentDraft.body}
                   </div>
                   <div className="flex items-center justify-between text-[9px] text-muted-foreground font-mono">
                     <span>* AI Personalized variables auto-mapped</span>
-                    <button className="bg-primary text-primary-foreground font-semibold px-3 py-1 rounded-full hover:opacity-90 cursor-pointer">
+                    <button className="bg-foreground text-background font-semibold px-3 py-1 rounded-full hover:opacity-90 cursor-pointer shadow-xs transition-opacity">
                       Send now
                     </button>
                   </div>
@@ -811,12 +827,12 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Keyword Research opportunities</h4>
-                <span className="text-[10px] text-emerald-500 font-bold">* Selected low competition keywords</span>
+                <span className="text-[10px] text-foreground/60 font-semibold">* Selected low competition keywords</span>
               </div>
               <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-muted/40 border-b border-border/80 text-muted-foreground font-semibold">
+                    <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Keyword</th>
                       <th className="p-2 text-right">Volume</th>
                       <th className="p-2 text-center">Difficulty</th>
@@ -826,14 +842,14 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                   </thead>
                   <tbody className="divide-y divide-border/40">
                     {report?.keywordMetrics.concat(report?.relatedKeywords || []).map((k: any, i: number) => (
-                      <tr key={i} className={`hover:bg-muted/10 ${k.difficulty < 30 ? 'bg-emerald-500/5' : ''}`}>
+                      <tr key={i} className={`hover:bg-muted/10 transition-colors ${k.difficulty < 30 ? 'bg-muted/5' : ''}`}>
                         <td className="p-2 font-medium text-foreground">
                           {k.keyword}
-                          {k.difficulty < 30 && <span className="ml-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono text-[8px] font-bold px-1.5 py-0.5 rounded">low diff</span>}
+                          {k.difficulty < 30 && <span className="ml-2 bg-muted text-foreground border border-border/30 font-mono text-[8px] font-bold px-1.5 py-0.5 rounded">low diff</span>}
                         </td>
                         <td className="p-2 text-right font-mono">{k.volume.toLocaleString()}</td>
                         <td className="p-2 text-center font-mono">
-                          <span className={`font-semibold ${k.difficulty > 50 ? 'text-rose-500' : k.difficulty > 30 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                          <span className="font-semibold text-foreground">
                             {k.difficulty}
                           </span>
                         </td>
@@ -854,7 +870,7 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
               <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-muted/40 border-b border-border/80 text-muted-foreground font-semibold">
+                    <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Domain</th>
                       <th className="p-2 text-right">Avg Position</th>
                       <th className="p-2 text-right">Median Position</th>
@@ -863,11 +879,11 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
                   </thead>
                   <tbody className="divide-y divide-border/40">
                     {report?.serpCompetitors.map((comp: any) => (
-                      <tr key={comp.domain} className="hover:bg-muted/10">
+                      <tr key={comp.domain} className="hover:bg-muted/10 transition-colors">
                         <td className="p-2 font-semibold text-foreground">{comp.domain}</td>
                         <td className="p-2 text-right font-mono">{comp.avgPos}</td>
                         <td className="p-2 text-right font-mono">{comp.medianPos}</td>
-                        <td className="p-2 text-right font-mono text-primary font-bold">{comp.visibility}</td>
+                        <td className="p-2 text-right font-mono text-foreground font-semibold">{comp.visibility}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -902,7 +918,7 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
   };
 
   return (
-    <div className="w-full h-full flex flex-col min-h-0 bg-background select-none">
+    <div className="w-full h-full flex flex-col min-h-0 bg-background select-none workflow-canvas-container">
       
       {/* 1. Mobile viewport layout (<md:hidden) */}
       <div className="overflow-hidden md:hidden" style={{ containerType: 'inline-size' }}>
@@ -984,73 +1000,37 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
       <div className="flex h-full flex-col min-h-0 flex-1 hidden md:flex">
         
         {/* Desktop Header */}
-        <header className="bg-background border-b border-border h-12 flex-shrink-0">
+        <header className="bg-background/80 backdrop-blur-md border-b border-border/50 h-12 flex-shrink-0">
           <div className="flex h-full items-center justify-between px-4">
             
-            {/* Header Left (Tab indicator dropdown button) */}
-            <div className="flex flex-shrink-0 items-center gap-3 overflow-hidden transition-all duration-300 w-[36%]">
-              <div className="flex flex-shrink-0 items-center">
-                <img 
-                  alt="Jam" 
-                  loading="lazy" 
-                  width="24" 
-                  height="28" 
-                  className="dark:hidden" 
-                  src="/jam-outline-transparent-light-thick.svg"
-                />
-                <img 
-                  alt="Jam" 
-                  loading="lazy" 
-                  width="24" 
-                  height="28" 
-                  className="hidden dark:block" 
-                  src="/jam-outline-transparent-dark-thick.svg"
-                />
+            {/* Header Left (macOS Style Window Controls + URL bar / Window Title) */}
+            <div className="flex flex-shrink-0 items-center gap-4 transition-all duration-300 w-[36%]">
+              {/* macOS window control buttons */}
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56] opacity-80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e] opacity-80" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f] opacity-80" />
               </div>
-              <button 
-                type="button" 
-                className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-all hover:bg-accent py-2 h-8 gap-2 px-2 text-foreground"
-              >
-                <span className="max-w-[170px] truncate whitespace-nowrap font-medium text-xs uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="truncate whitespace-nowrap text-[10px] font-mono uppercase tracking-wider text-muted-foreground/80">
                   {scenario.windowTitle}
                 </span>
-                <ChevronDown className="text-muted-foreground h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            {/* Header Middle (Interactive Sub-Tabs switching between Preview and Workflow) */}
-            <div className="flex flex-1 items-center justify-between px-4">
-              <div className="flex flex-1 justify-center">
-                <div className="flex gap-1 bg-muted/40 p-0.5 rounded-lg border border-border/20">
-                  <button 
-                    onClick={() => setActiveRightTab('preview')}
-                    className={`rounded-md px-4 py-1 text-xs font-semibold transition-all cursor-pointer ${
-                      activeRightTab === 'preview' ? 'bg-background text-foreground shadow-xs border border-border/20' : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    Preview
-                  </button>
-                  {hasWorkflow && (
-                    <button 
-                      onClick={() => setActiveRightTab('workflows')}
-                      className={`rounded-md px-4 py-1 text-xs font-semibold transition-all cursor-pointer ${
-                        activeRightTab === 'workflows' ? 'bg-background text-foreground shadow-xs border border-border/20' : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      Workflows
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
 
+            {/* Header Middle (Empty) */}
+            <div className="flex flex-1 items-center justify-center" />
+
+            {/* Header Right (Empty) */}
             {/* Header Right */}
-            <div className="w-[100px] flex justify-end">
+            <div className="flex-shrink-0 flex items-center justify-end px-4">
               <button 
-                className="inline-flex cursor-pointer items-center justify-center rounded-md hover:bg-accent text-muted-foreground hover:text-foreground h-8 w-8"
-                title="Toggle focus mode"
+                onClick={handleRestartPlayback}
+                className="text-foreground/75 hover:text-foreground text-[10px] font-semibold flex items-center gap-1.5 cursor-pointer transition-colors border border-border bg-card hover:bg-accent px-3 py-1 rounded-full shadow-2xs"
+                title="Replay Demo"
               >
-                <PanelRight className="h-4 w-4" />
+                <RotateCcw className="h-3 w-3" />
+                <span>Replay Demo</span>
               </button>
             </div>
 
@@ -1060,28 +1040,140 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
         {/* Split screen content container */}
         <div className="flex min-h-0 flex-1">
           
-          {/* Chat columns sidebar */}
-          <div className="flex flex-col overflow-hidden transition-all duration-300 w-[34%] border-r border-border">
-            <ChatSidebar 
-              revealedMessages={revealedMessages}
-              isTyping={isTyping}
-              activeToolRun={activeToolRun}
-              toolCompleted={toolCompleted}
-              onRestart={handleRestartPlayback}
-              chatContainerRef={chatContainerRef}
-            />
+          {/* Collapsible Chat Sidebar */}
+          <div className={`flex flex-col overflow-hidden transition-all duration-300 border-r border-border ${isSidebarOpen ? 'w-[34%]' : 'w-0 border-r-0'}`}>
+            {isSidebarOpen && (
+              <>
+                {/* Chat Sidebar Header: Jam logo + scenario dropdown + collapse toggle */}
+                <div className="flex-shrink-0 h-10 flex items-center justify-between px-3 border-b border-border/40 bg-muted/5">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    {/* Jam outline logo */}
+                    <img 
+                      alt="Jam" 
+                      loading="lazy" 
+                      width="16" 
+                      height="19" 
+                      className="dark:hidden opacity-80" 
+                      src="/jam-outline-transparent-light-thick.svg"
+                    />
+                    <img 
+                      alt="Jam" 
+                      loading="lazy" 
+                      width="16" 
+                      height="19" 
+                      className="hidden dark:block opacity-80" 
+                      src="/jam-outline-transparent-dark-thick.svg"
+                    />
+                    
+                    {/* Scenario filter dropdown */}
+                    <div ref={dropdownRef} className="relative min-w-0">
+                      <button 
+                        onClick={() => setIsScenarioDropdownOpen(!isScenarioDropdownOpen)}
+                        className="flex items-center gap-1 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors cursor-pointer truncate"
+                      >
+                        <span className="truncate">{scenario.tabLabel}</span>
+                        <ChevronDown className={`h-3 w-3 flex-shrink-0 text-muted-foreground transition-transform ${isScenarioDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {/* Dropdown menu */}
+                      {isScenarioDropdownOpen && (
+                        <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[180px]">
+                          {SCENARIOS.map(s => (
+                            <button
+                              key={s.id}
+                              onClick={() => {
+                                setActiveTab(s.tabKey);
+                                setIsScenarioDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
+                                s.tabKey === activeTab 
+                                  ? 'bg-muted/30 text-foreground font-semibold' 
+                                  : 'text-foreground/70 hover:bg-muted/15 hover:text-foreground'
+                              }`}
+                            >
+                              {s.tabLabel}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Collapse sidebar button */}
+                  <button 
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="inline-flex cursor-pointer items-center justify-center rounded-md hover:bg-accent text-muted-foreground hover:text-foreground h-7 w-7 flex-shrink-0"
+                    title="Close sidebar"
+                  >
+                    <PanelLeftClose className="h-4 w-4" />
+                  </button>
+                </div>
+
+                <ChatSidebar 
+                  revealedMessages={revealedMessages}
+                  isTyping={isTyping}
+                  activeToolRun={activeToolRun}
+                  toolCompleted={toolCompleted}
+                  onRestart={handleRestartPlayback}
+                  chatContainerRef={chatContainerRef}
+                />
+              </>
+            )}
           </div>
 
           {/* Workflow Canvas display side */}
           <div className="min-w-0 flex-1 flex p-2 relative bg-muted/5">
             <div className="h-full w-full flex flex-col border border-border rounded-lg bg-background overflow-hidden relative">
-              <div className="border-border flex h-10 shrink-0 items-center justify-end border-b px-2 bg-muted/5">
-                <button 
-                  className="inline-flex cursor-pointer items-center justify-center rounded-md hover:bg-accent hover:text-foreground text-muted-foreground size-8 h-7 w-7"
-                  title="Close panel"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              <div className="border-border flex h-10 shrink-0 items-center justify-between border-b px-2 bg-muted/5">
+                {/* Expand sidebar button (visible when sidebar is closed) */}
+                <div className="flex items-center w-1/4">
+                  {!isSidebarOpen && (
+                    <button 
+                      onClick={() => setIsSidebarOpen(true)}
+                      className="inline-flex cursor-pointer items-center justify-center rounded-md hover:bg-accent text-muted-foreground hover:text-foreground h-7 w-7"
+                      title="Open sidebar"
+                    >
+                      <PanelRight className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Section Tabs: Preview and Workflows */}
+                <div className="flex h-full items-center gap-6 justify-center">
+                  <button 
+                    onClick={() => setActiveRightTab('preview')}
+                    className={`relative h-full text-xs font-medium transition-colors cursor-pointer flex items-center px-1 ${
+                      activeRightTab === 'preview' ? 'text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <span>Preview</span>
+                    {activeRightTab === 'preview' && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
+                    )}
+                  </button>
+                  {hasWorkflow && (
+                    <button 
+                      onClick={() => setActiveRightTab('workflows')}
+                      className={`relative h-full text-xs font-medium transition-colors cursor-pointer flex items-center px-1 ${
+                        activeRightTab === 'workflows' ? 'text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <span>Workflows</span>
+                      {activeRightTab === 'workflows' && (
+                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary" />
+                      )}
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex justify-end w-1/4">
+                  <button 
+                    className="inline-flex cursor-pointer items-center justify-center rounded-md hover:bg-accent hover:text-foreground text-muted-foreground h-7 w-7"
+                    title="Close panel"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               
               {/* Display either the Workflow diagram or the Output Preview */}
@@ -1102,6 +1194,7 @@ export default function WorkflowCanvas({ activeTab, darkMode }: WorkflowCanvasPr
         </div>
 
       </div>
+
 
     </div>
   );
@@ -1128,7 +1221,7 @@ const ChatSidebar = ({
   chatContainerRef: React.RefObject<HTMLDivElement | null>;
 }) => {
   return (
-    <div className="flex h-full flex-col bg-card select-none">
+    <div className="flex flex-1 min-h-0 flex-col bg-card select-none">
       {/* Scrollable message window */}
       <div 
         ref={chatContainerRef}
@@ -1137,47 +1230,61 @@ const ChatSidebar = ({
         {revealedMessages.map((msg) => {
           const isUser = msg.role === 'user';
           return (
-            <div key={msg.id} className="space-y-2">
-              <div className={`flex items-start gap-2.5 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                {/* Agent Avatar */}
-                {!isUser && (
-                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground">
-                    <Sparkles className="w-3.5 h-3.5 fill-current" />
+            <div key={msg.id} className="space-y-1.5">
+              <div className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'}`}>
+                {/* Message Content */}
+                {isUser ? (
+                  /* User Message: warm-cream bubble */
+                  <div 
+                    className="max-w-[85%] text-xs leading-relaxed px-4 py-2.5 rounded-2xl text-left whitespace-pre-wrap bg-accent text-foreground shadow-2xs"
+                  >
+                    {msg.content}
+                  </div>
+                ) : (
+                  /* Agent Message: plain text, no bubble, no avatar */
+                  <div 
+                    className="max-w-[90%] text-xs leading-relaxed text-left whitespace-pre-wrap text-foreground/90 py-1"
+                  >
+                    {msg.content}
                   </div>
                 )}
-                
-                {/* Message Bubble */}
-                <div 
-                  className={`max-w-[85%] text-xs leading-relaxed px-4 py-2.5 rounded-2xl border text-left whitespace-pre-wrap ${
-                    isUser 
-                      ? 'bg-foreground text-background border-transparent rounded-tr-none' 
-                      : 'bg-muted/30 text-foreground border-border/40 rounded-tl-none font-light'
-                  }`}
-                >
-                  {msg.content}
-                </div>
               </div>
+
+              {/* Action Row: ThumbsUp, ThumbsDown, Copy */}
+              {!isUser && (
+                <div className="flex items-center gap-2.5 justify-start pl-0.5">
+                  <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
+                    <ThumbsUp className="h-3 w-3" />
+                  </button>
+                  <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
+                    <ThumbsDown className="h-3 w-3" />
+                  </button>
+                  <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors cursor-pointer">
+                    <Copy className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
 
               {/* Tool Execution Card inside Chat */}
               {msg.toolCall && (
-                <div className="flex items-start gap-2.5 pl-9">
-                  <div className="bg-muted/40 border border-border/50 rounded-xl p-3 text-left w-full space-y-2 max-w-[85%] shadow-xs">
+                <div className="flex items-start">
+                  <div className="bg-muted/20 border border-border/30 rounded-xl p-3 text-left w-full space-y-2 max-w-[85%] shadow-2xs">
                     <div className="flex items-center gap-1.5 text-[10px] font-semibold text-muted-foreground">
-                      <Terminal className="h-3.5 w-3.5 text-primary" />
+                      <Terminal className="h-3.5 w-3.5 text-foreground/60" />
                       <span className="font-mono text-[9px] text-foreground/80 truncate">
                         {msg.toolCall.name}(...)
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] bg-background/50 border border-border/30 rounded p-1.5 font-mono text-foreground/60">
+                    <div className="flex items-center justify-between text-[10px] bg-background border border-border/20 rounded p-1.5 font-mono text-foreground/60">
                       <span>Parameters check</span>
                       {activeToolRun === msg.toolCall.name && !toolCompleted ? (
-                        <span className="flex items-center gap-1 text-amber-500 font-bold animate-pulse">
+                        <span className="flex items-center gap-1 text-primary font-bold animate-pulse">
                           <Loader2 className="h-2.5 w-2.5 animate-spin" /> running
                         </span>
                       ) : (
-                        <span className="text-emerald-500 font-bold flex items-center gap-0.5">
-                          <CheckCircle2 className="h-3 w-3" /> success
+                        <span className="text-foreground/80 font-bold flex items-center gap-0.5">
+                          <CheckCircle2 className="h-3 w-3 text-foreground/50" /> success
                         </span>
                       )}
                     </div>
@@ -1190,37 +1297,23 @@ const ChatSidebar = ({
 
         {/* Typing indicator */}
         {isTyping && (
-          <div className="flex items-start gap-2.5 justify-start">
-            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-primary-foreground animate-pulse">
-              <Sparkles className="w-3.5 h-3.5 fill-current" />
-            </div>
-            <div className="flex items-center gap-1 bg-muted/30 border border-border/30 rounded-2xl px-4 py-2.5 w-fit shadow-xs">
-              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div className="flex items-start justify-start">
+            <div className="flex items-center gap-1 bg-muted/10 border border-border/25 rounded-2xl px-4 py-2.5 w-fit">
+              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 bg-foreground/35 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         )}
       </div>
 
       {/* Chat Footer Box */}
-      <div className="flex-shrink-0 border-t border-border/40 p-3 bg-muted/5 flex flex-col gap-2">
-        {/* Replay demo / Start jamming helper */}
-        <div className="flex justify-between items-center px-1 text-[10px] font-mono text-muted-foreground/60">
-          <span>Simulation Active</span>
-          <button 
-            onClick={onRestart}
-            className="text-primary hover:underline font-bold flex items-center gap-1 cursor-pointer"
-          >
-            <RotateCcw className="h-3 w-3" /> Replay Demo
-          </button>
-        </div>
-
-        <form className="group bg-card focus-within:border-primary/30 flex flex-col gap-2 rounded-2xl border border-border p-2.5 shadow-xs transition-colors duration-150 ease-in-out">
+      <div className="flex-shrink-0 border-t border-border/40 p-3 bg-muted/5 flex flex-col">
+        <form className="group bg-card focus-within:border-foreground/30 flex flex-col gap-2 rounded-xl border border-border p-2.5 shadow-2xs transition-colors duration-150 ease-in-out">
           <div className="relative flex flex-1 items-center">
             <textarea 
               placeholder="Sign up to chat with Jam" 
-              className="placeholder:text-muted-foreground/50 m-1 flex min-h-[36px] w-full resize-none rounded-md border-none bg-transparent p-0 text-xs leading-snug focus-visible:outline-none disabled:cursor-not-allowed" 
+              className="placeholder:text-muted-foreground/40 m-1 flex min-h-[36px] w-full resize-none rounded-md border-none bg-transparent p-0 text-xs leading-snug focus-visible:outline-none disabled:cursor-not-allowed" 
               disabled 
               style={{ height: '36px' }} 
             />
@@ -1229,15 +1322,15 @@ const ChatSidebar = ({
             <button 
               type="button" 
               disabled 
-              className="border border-border/50 hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full transition-colors disabled:opacity-50"
+              className="border border-border/40 hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full transition-colors disabled:opacity-50"
             >
-              <ImagePlus className="h-3.5 w-3.5 text-muted-foreground" />
+              <ImagePlus className="h-3.5 w-3.5 text-muted-foreground/60" />
             </button>
             <div className="ml-auto">
               <button 
                 type="submit" 
                 disabled 
-                className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-full transition-opacity disabled:opacity-50"
+                className="bg-foreground text-background flex h-8 w-8 items-center justify-center rounded-full transition-opacity disabled:opacity-50"
               >
                 <ArrowRight className="h-4 w-4" />
               </button>
@@ -1282,7 +1375,7 @@ const WorkflowDiagram = ({
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill={darkMode ? '#f43f5e' : '#c21d4c'} />
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill={darkMode ? '#f2f1f3' : '#101010'} />
             </marker>
             <style>{`
               @keyframes flowDash {
@@ -1307,8 +1400,8 @@ const WorkflowDiagram = ({
                 key={step.id}
                 d={`M ${startX} 180 L ${endX} 180`} 
                 fill="none" 
-                stroke={isFinished ? (darkMode ? '#f43f5e' : '#c21d4c') : (darkMode ? '#2c2a30' : '#e4e2e8')} 
-                strokeWidth="2" 
+                stroke={isFinished ? (darkMode ? '#f2f1f3' : '#101010') : (darkMode ? '#222024' : '#eae8e3')} 
+                strokeWidth="1.5" 
                 strokeDasharray={isFinished ? "4 4" : "0"} 
                 markerEnd="url(#arrow-workflow)" 
                 className={isFinished ? "animate-flow-dash" : ""}
@@ -1325,16 +1418,16 @@ const WorkflowDiagram = ({
           const isRunning = status === 'running';
 
           const cardBorderClass = isRunning 
-            ? 'border-amber-500 shadow-lg shadow-amber-500/10 ring-2 ring-amber-500/20' 
+            ? 'border-foreground shadow-xs ring-1 ring-foreground/15' 
             : isCompleted 
-              ? 'border-primary shadow-md' 
-              : 'border-border opacity-70';
+              ? 'border-border shadow-2xs' 
+              : 'border-border/40 opacity-60';
 
           const dotColorClass = isCompleted 
-            ? 'bg-blue-500' 
+            ? 'bg-foreground' 
             : isRunning 
-              ? 'bg-amber-500 animate-pulse' 
-              : 'bg-muted-foreground/35';
+              ? 'bg-primary animate-pulse' 
+              : 'bg-muted-foreground/30';
 
           return (
             <div 
@@ -1346,7 +1439,7 @@ const WorkflowDiagram = ({
               {index > 0 && (
                 <div 
                   className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background z-10 transition-colors ${
-                    isCompleted ? 'bg-primary' : 'bg-muted/40'
+                    isCompleted ? 'bg-foreground' : 'bg-muted/40'
                   }`} 
                 />
               )}
@@ -1355,14 +1448,14 @@ const WorkflowDiagram = ({
               <div className="absolute -top-3.5 -left-3.5 z-30 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto">
                 <button 
                   title="View Details" 
-                  className="w-7 h-7 rounded-full flex items-center justify-center bg-background border border-border shadow-md hover:bg-accent hover:border-accent-foreground/20 transition-colors duration-150 cursor-pointer"
+                  className="w-7 h-7 rounded-full flex items-center justify-center bg-background border border-border shadow-xs hover:bg-accent hover:border-accent-foreground/10 transition-colors duration-150 cursor-pointer"
                 >
-                  <Eye className="w-3.5 h-3.5 text-foreground" />
+                  <Eye className="w-3.5 h-3.5 text-foreground/80" />
                 </button>
               </div>
 
               {/* Top Actions Panel */}
-              <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-background border border-border rounded-lg shadow-md px-1.5 py-1 pointer-events-auto">
+              <div className="absolute -top-11 left-1/2 -translate-x-1/2 z-30 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-background border border-border rounded-lg shadow-sm px-1.5 py-1 pointer-events-auto">
                 <button 
                   type="button" 
                   className="flex items-center gap-1 px-1.5 py-1 rounded-md transition-colors duration-150 hover:bg-accent text-muted-foreground hover:text-foreground cursor-pointer"
@@ -1391,7 +1484,7 @@ const WorkflowDiagram = ({
                 <button 
                   type="button" 
                   title="Add node after" 
-                  className="absolute top-1/2 -translate-y-1/2 -right-3 z-30 w-6 h-6 rounded-full bg-background border border-border shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent hover:border-accent-foreground/20 cursor-pointer"
+                  className="absolute top-1/2 -translate-y-1/2 -right-3 z-30 w-6 h-6 rounded-full bg-background border border-border shadow-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent hover:border-accent-foreground/10 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 text-foreground" />
                 </button>
@@ -1399,24 +1492,24 @@ const WorkflowDiagram = ({
 
               {/* Main Card Body */}
               <div 
-                className={`relative w-full h-full rounded-xl border overflow-hidden transition-all duration-300 bg-card hover:border-border/90 cursor-pointer flex flex-col ${cardBorderClass}`}
+                className={`relative w-full h-full rounded-xl border overflow-hidden transition-all duration-300 bg-card hover:border-border/80 cursor-pointer flex flex-col ${cardBorderClass}`}
               >
                 {/* Upper portion */}
-                <div className="bg-muted/30 h-[90px] overflow-hidden flex flex-col p-2 select-none border-b border-border/50">
+                <div className="bg-muted/10 h-[90px] overflow-hidden flex flex-col p-2 select-none border-b border-border/40">
                   <div className="flex items-center gap-1.5 mb-1.5 flex-shrink-0">
-                    <span className="text-foreground/75 text-[9px] font-bold uppercase tracking-wider">
-                      {isCompleted ? 'Step Complete' : isRunning ? 'Executing...' : 'Waiting'}
+                    <span className="text-foreground/60 text-[9px] font-semibold uppercase tracking-wider">
+                      {isCompleted ? 'Step Complete' : isRunning ? 'Executing' : 'Waiting'}
                     </span>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center text-center px-2">
                     {isCompleted ? (
-                      <span className="text-foreground/80 text-[10.5px] font-mono leading-normal font-medium bg-background/50 border border-border/30 rounded py-1.5 px-2 max-w-[210px] truncate shadow-2xs">
+                      <span className="text-foreground/80 text-[10px] font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[210px] truncate shadow-2xs">
                         {node.output}
                       </span>
                     ) : isRunning ? (
-                      <div className="flex items-center justify-center gap-1.5 text-amber-500 font-medium font-mono text-[10px]">
-                        <Loader2 className="h-3 w-3 animate-spin" /> running agent...
+                      <div className="flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono text-[10px]">
+                        <Loader2 className="h-3 w-3 animate-spin text-foreground/50" /> running agent...
                       </div>
                     ) : (
                       <span className="text-foreground/30 text-[10px] italic">Queued in sequence</span>
@@ -1430,7 +1523,7 @@ const WorkflowDiagram = ({
                     {node.label}
                   </div>
                   <div className="flex items-center justify-between mt-1.5 gap-2">
-                    <span className="text-[10px] text-muted-foreground truncate flex-1 font-semibold">
+                    <span className="text-[10px] text-muted-foreground truncate flex-1 font-normal">
                       {node.category}
                     </span>
                     <div className="flex items-center shrink-0">
@@ -1444,7 +1537,7 @@ const WorkflowDiagram = ({
               {index < steps.length - 1 && (
                 <div 
                   className={`absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-background z-10 transition-colors ${
-                    isCompleted ? 'bg-primary' : 'bg-muted/40'
+                    isCompleted ? 'bg-foreground' : 'bg-muted/40'
                   }`} 
                 />
               )}

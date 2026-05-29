@@ -22,7 +22,7 @@ export default function BackedBy() {
             <span className="text-xs font-medium text-muted-foreground">Backed by</span>
           </div>
           <h3 className="text-sm sm:text-base text-muted-foreground mb-4">Funds, Founders, and Engineers</h3>
-          <div className="scroller relative z-20 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
+          <div className="scroller">
             <ul className="flex w-max min-w-full shrink-0 flex-nowrap gap-16 py-4 hover:[animation-play-state:paused] animate-infinite-scroll">
               {logos.map((logo, idx) => (
                 <li key={`logo-${idx}`} className="relative shrink-0 flex items-center justify-center w-auto">

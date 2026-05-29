@@ -92,29 +92,34 @@ export default function App() {
                 />
               </div>
 
-              {/* Tab Selector Buttons Bar */}
-              <div className="relative z-10 flex-shrink-0 px-4 py-4 sm:px-6 sm:py-5">
-                <div className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`rounded-full px-4 py-2 text-sm whitespace-nowrap transition-colors cursor-pointer ${
-                        activeTab === tab.id 
-                          ? 'bg-foreground text-background font-medium' 
-                          : 'bg-background/80 text-foreground hover:bg-background border-border border backdrop-blur'
-                      }`}
-                    >
-                      {tab.name}
-                    </button>
-                  ))}
+              {/* Centered Content Container */}
+              <div className="relative z-10 flex flex-col flex-1 min-h-0 w-full max-w-[1432px] mx-auto px-4 sm:px-6 md:px-8">
+                
+                {/* Tab Selector Buttons Bar */}
+                <div className="flex-shrink-0 py-4 sm:py-5">
+                  <div className="scrollbar-hide flex flex-nowrap gap-2 overflow-x-auto">
+                    {tabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`rounded-full px-4 py-2 text-sm whitespace-nowrap transition-colors cursor-pointer ${
+                          activeTab === tab.id 
+                            ? 'bg-foreground text-background font-medium' 
+                            : 'bg-background/80 text-foreground hover:bg-background border-border border backdrop-blur'
+                        }`}
+                      >
+                        {tab.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Workflow Canvas display */}
-              <section className="relative min-h-0 flex-1 md:min-w-[1432px]">
-                <WorkflowCanvas activeTab={activeTab} darkMode={darkMode} />
-              </section>
+                {/* Workflow Canvas display */}
+                <section className="relative min-h-0 flex-1 w-full pb-4 sm:pb-6 md:pb-8">
+                  <WorkflowCanvas activeTab={activeTab} setActiveTab={setActiveTab} darkMode={darkMode} />
+                </section>
+
+              </div>
 
             </div>
           </div>

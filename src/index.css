@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@100..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
 
 @import "tailwindcss";
 
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  --font-sans: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Inter Variable', 'Inter', sans-serif;
   --font-serif: 'Instrument Serif', 'EB Garamond', serif;
 
   /* Theme variables mapping */
@@ -37,23 +37,55 @@
   --animate-glow-drift-3: glow-drift-3 9s ease-in-out infinite;
 
   @keyframes infinite-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
   }
+
   @keyframes glow-drift-1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-15px, 10px) scale(1.1); }
+
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+      transform: translate(-15px, 10px) scale(1.1);
+    }
   }
+
   @keyframes glow-drift-2 {
-    0%, 100% { transform: translate(-50%, 0) scale(1); }
-    50% { transform: translate(-50%, -15px) scale(0.95); }
+
+    0%,
+    100% {
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    50% {
+      transform: translate(-50%, -15px) scale(0.95);
+    }
   }
+
   @keyframes glow-drift-3 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(12px, -8px) scale(1.05); }
+
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+      transform: translate(12px, -8px) scale(1.05);
+    }
   }
+
   @keyframes blink {
-    50% { opacity: 0; }
+    50% {
+      opacity: 0;
+    }
   }
 }
 
@@ -69,16 +101,17 @@
     --popover: #FAF9F5;
     --popover-foreground: #101010;
 
-    --primary: #c21d4c; /* deep rich raspberry */
+    --primary: #c21d4c;
+    /* deep rich raspberry */
     --primary-foreground: #ffffff;
 
     --secondary: #eae8e3;
     --secondary-foreground: #101010;
 
-    --muted: #dedbe1;
+    --muted: #efefef;
     --muted-foreground: #5e5a62;
 
-    --accent: #eae7ec;
+    --accent: #f5f5f7;
     --accent-foreground: #101010;
 
     --destructive: #ef4444;
@@ -93,13 +126,14 @@
     --background: #101010;
     --foreground: #f2f1f3;
 
-    --card: #18171a;
+    --card: #101010;
     --card-foreground: #f2f1f3;
 
-    --popover: #18171a;
+    --popover: #101010;
     --popover-foreground: #f2f1f3;
 
-    --primary: #f43f5e; /* vibrant ruby red */
+    --primary: #f43f5e;
+    /* vibrant ruby red */
     --primary-foreground: #101010;
 
     --secondary: #222024;
@@ -108,7 +142,7 @@
     --muted: #2a282d;
     --muted-foreground: #9a959f;
 
-    --accent: #2e2c31;
+    --accent: #1f1f21;
     --accent-foreground: #f2f1f3;
 
     --destructive: #ef4444;
@@ -154,15 +188,19 @@
 .navbar-fixed {
   @apply fixed top-0 right-0 left-0 z-50 transition-all duration-300 ease-in-out border-b border-border/20;
 }
+
 .navbar-fixed.scrolled {
   @apply bg-background/80 backdrop-blur-md border-b border-border;
 }
+
 .navbar-inner {
   @apply flex h-12 items-center justify-between;
 }
+
 .nav-link {
   @apply text-foreground/80 text-sm font-normal transition-colors hover:text-foreground hover:opacity-100;
 }
+
 .nav-btn-primary {
   @apply bg-foreground text-background font-medium hover:bg-foreground/90 rounded-full text-sm px-5 py-2 transition-all flex items-center gap-1.5 cursor-pointer;
 }
@@ -171,15 +209,25 @@
 .hero-wrapper {
   @apply relative flex flex-col items-center justify-center overflow-hidden px-6 py-20 text-center sm:px-10 sm:py-28 md:px-16;
 }
+
 .hero-glow-container {
   @apply absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-20;
 }
+
 .hero-title {
-  @apply text-foreground text-4xl sm:text-5xl md:text-7xl font-light tracking-tight leading-[1.1] max-w-4xl;
+  @apply text-foreground text-4xl sm:text-5xl font-light tracking-tight leading-[1.1] max-w-4xl;
 }
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: calc(4.5rem - 4px);
+  }
+}
+
 .hero-subtitle {
   @apply text-muted-foreground mt-6 max-w-xl text-lg sm:text-xl font-normal leading-relaxed;
 }
+
 .hero-cta {
   @apply relative overflow-hidden rounded-full py-3 px-8 text-center text-base font-semibold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] bg-primary text-primary-foreground border border-transparent inline-flex items-center gap-2 cursor-pointer;
 }
@@ -188,12 +236,15 @@
 .demo-switcher-bar {
   @apply flex flex-nowrap gap-2 overflow-x-auto pb-2 border-b border-border/50 scrollbar-none;
 }
+
 .demo-tab-btn {
   @apply rounded-full px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-all border border-transparent cursor-pointer;
 }
+
 .demo-tab-btn.active {
   @apply bg-foreground text-background shadow-sm;
 }
+
 .demo-tab-btn.inactive {
   @apply bg-card/60 text-foreground/80 hover:bg-card border-border backdrop-blur-xs;
 }
@@ -202,18 +253,23 @@
 .custom-node-box {
   @apply rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden flex flex-col;
 }
+
 .custom-node-header {
   @apply bg-muted/40 px-3.5 py-2 border-b border-border/50 flex items-center justify-between;
 }
+
 .custom-node-title {
   @apply text-[11px] font-semibold text-muted-foreground tracking-wider uppercase flex items-center gap-1.5;
 }
+
 .custom-node-body {
   @apply p-3 flex-1 flex flex-col justify-between min-h-[80px];
 }
+
 .custom-node-content-title {
   @apply text-sm font-semibold text-foreground leading-tight;
 }
+
 .custom-node-indicator {
   @apply w-2 h-2 rounded-full;
 }
@@ -222,26 +278,34 @@
 .feature-section-grid {
   @apply grid grid-cols-1 md:grid-cols-2 border-b border-border;
 }
+
 .feature-info-pane {
   @apply p-8 sm:p-12 md:p-16 flex flex-col justify-center border-r border-border last:border-r-0;
 }
+
 .feature-visual-pane {
   @apply p-8 sm:p-12 md:p-16 flex items-center justify-center bg-card/40 relative overflow-hidden;
 }
+
 .feature-badge {
   @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary mb-4 w-fit;
 }
+
 .feature-title {
   @apply text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight;
 }
+
 .feature-desc {
   @apply text-muted-foreground mt-4 text-base sm:text-lg font-normal leading-relaxed;
 }
 
 /* Marquee / Scroller list styles */
 .scroller {
-  @apply relative z-20 overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)];
+  @apply relative z-20 overflow-hidden;
+  mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
 }
+
 .scroller-inner {
   @apply flex w-max min-w-full shrink-0 flex-nowrap gap-16 py-4 hover:[animation-play-state:paused] animate-[infinite-scroll_45s_linear_infinite];
 }
@@ -250,9 +314,11 @@
 .platform-stat-row {
   @apply flex items-center justify-between border-b border-border/40 py-2.5 last:border-b-0;
 }
+
 .platform-stat-progress {
   @apply h-1.5 rounded-full bg-muted overflow-hidden flex-1 mx-3;
 }
+
 .progress-fill {
   @apply h-full bg-primary rounded-full;
 }
@@ -261,12 +327,15 @@
 .comp-table {
   @apply w-full border-collapse border border-border bg-card rounded-xl overflow-hidden shadow-xs;
 }
+
 .comp-th {
   @apply border-b border-border bg-muted/40 p-4 text-left text-sm font-semibold text-foreground;
 }
+
 .comp-td {
   @apply border-b border-border/50 p-4 text-sm text-foreground/80 align-top;
 }
+
 .comp-col-highlight {
   @apply bg-primary/5 border-x border-primary/20;
 }
@@ -275,12 +344,15 @@
 .contacts-table {
   @apply w-full border-collapse border border-border bg-card rounded-lg overflow-hidden text-left text-sm;
 }
+
 .contacts-th {
   @apply bg-muted/30 border-b border-border p-3 font-semibold text-muted-foreground text-xs uppercase tracking-wider;
 }
+
 .contacts-td {
   @apply border-b border-border/50 p-3 text-foreground/90;
 }
+
 .contact-row-hover {
   @apply transition-colors hover:bg-muted/10;
 }
@@ -289,18 +361,23 @@
 .inbox-container {
   @apply flex border border-border bg-card rounded-xl overflow-hidden shadow-sm h-[480px] w-full max-w-4xl;
 }
+
 .inbox-sidebar {
   @apply w-1/3 border-r border-border bg-muted/20 flex flex-col;
 }
+
 .inbox-list {
   @apply flex-1 overflow-y-auto divide-y divide-border/50;
 }
+
 .inbox-item {
   @apply p-4 text-left cursor-pointer transition-colors hover:bg-muted/30 flex flex-col gap-1;
 }
+
 .inbox-item.active {
   @apply bg-accent/80 border-l-4 border-primary;
 }
+
 .inbox-body-view {
   @apply w-2/3 p-6 flex flex-col justify-between bg-card overflow-y-auto;
 }
@@ -309,15 +386,19 @@
 .slack-container {
   @apply bg-[#121214] border border-[#2d2d30] rounded-xl p-5 text-white shadow-lg w-full max-w-md font-sans text-sm;
 }
+
 .slack-header {
   @apply flex items-center gap-2 border-b border-[#2d2d30] pb-3 mb-3;
 }
+
 .slack-message {
   @apply flex gap-3 mb-4 last:mb-0;
 }
+
 .slack-avatar {
   @apply w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-bold text-white text-xs;
 }
+
 .slack-btn {
   @apply text-[11px] font-semibold bg-[#2e2e33] hover:bg-[#3b3b40] px-3.5 py-1.5 rounded border border-[#3b3b40] text-white transition-all cursor-pointer mr-2;
 }
@@ -325,12 +406,15 @@
 .github-container {
   @apply border border-border bg-card rounded-xl p-5 shadow-sm w-full max-w-md text-sm;
 }
+
 .github-pr-header {
   @apply flex items-center gap-2 pb-3 border-b border-border;
 }
+
 .github-diff {
   @apply bg-muted/30 border border-border/60 rounded-md p-3 font-mono text-xs my-3 space-y-1 overflow-x-auto;
 }
+
 .github-comment {
   @apply border border-border/80 rounded-lg p-3 bg-muted/10 relative mt-2;
 }
@@ -339,9 +423,11 @@
 .blog-card {
   @apply rounded-xl border border-border bg-card p-6 shadow-xs hover:shadow-md transition-all flex flex-col justify-between hover:border-primary/50 cursor-pointer;
 }
+
 .changelog-card {
   @apply flex flex-col md:flex-row gap-6 md:gap-12 py-8 border-b border-border/60 last:border-b-0;
 }
+
 .changelog-date {
   @apply text-sm font-semibold text-primary tracking-wider uppercase md:w-32 shrink-0;
 }
@@ -350,9 +436,11 @@
 .footer-wrap {
   @apply py-16 border-t border-border bg-card/30;
 }
+
 .footer-title {
   @apply text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4;
 }
+
 .footer-link {
   @apply text-foreground/75 hover:text-foreground text-sm transition-colors;
 }
@@ -368,14 +456,17 @@
   opacity: 0.4;
   transition: filter 0.3s ease-in-out, opacity 0.2s ease-in-out;
 }
+
 .theme-transition-logo:hover {
   filter: brightness(0) invert(0);
   opacity: 0.9;
 }
+
 .dark .theme-transition-logo {
   filter: brightness(0) invert(1);
   opacity: 0.4;
 }
+
 .dark .theme-transition-logo:hover {
   filter: brightness(0) invert(1);
   opacity: 0.95;
@@ -386,6 +477,7 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(16, 16, 16, 0.12) transparent;
 }
+
 .dark * {
   scrollbar-color: rgba(242, 241, 243, 0.12) transparent;
 }
@@ -394,17 +486,21 @@
   width: 5px;
   height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(16, 16, 16, 0.10);
   border-radius: 9999px;
   transition: background 0.2s;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(16, 16, 16, 0.25);
 }
+
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
@@ -412,6 +508,7 @@
 .dark ::-webkit-scrollbar-thumb {
   background: rgba(242, 241, 243, 0.10);
 }
+
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(242, 241, 243, 0.25);
 }
@@ -457,9 +554,11 @@
 .react-flow__node {
   border-width: 0.5px !important;
 }
+
 .react-flow__handle {
   border-width: 0.5px !important;
 }
+
 .react-flow__edge-path {
   stroke-width: 0.5px !important;
 }
@@ -473,7 +572,7 @@
 }
 
 /* Ensure the button contents are on top of the gradient sweep */
-.btn-gradient-highlight > * {
+.btn-gradient-highlight>* {
   position: relative;
   z-index: 2;
 }
@@ -492,26 +591,22 @@
 
 /* Light Mode: Sheen sweep with silver reflection and brand ruby/red tint */
 .btn-gradient-highlight::before {
-  background-image: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(241, 6, 6, 0.12) 40%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(186, 8, 73, 0.12) 60%,
-    rgba(255, 255, 255, 0) 70%
-  ) !important;
+  background-image: linear-gradient(120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(241, 6, 6, 0.12) 40%,
+      rgba(255, 255, 255, 0.25) 50%,
+      rgba(186, 8, 73, 0.12) 60%,
+      rgba(255, 255, 255, 0) 70%) !important;
 }
 
 /* Dark Mode: Adapted sheen sweep with brighter white gloss and softer brand tint for the light button face */
 .dark .btn-gradient-highlight::before {
-  background-image: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0) 30%,
-    rgba(241, 6, 6, 0.08) 40%,
-    rgba(255, 255, 255, 0.55) 50%,
-    rgba(186, 8, 73, 0.08) 60%,
-    rgba(255, 255, 255, 0) 70%
-  ) !important;
+  background-image: linear-gradient(120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(241, 6, 6, 0.08) 40%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(186, 8, 73, 0.08) 60%,
+      rgba(255, 255, 255, 0) 70%) !important;
 }
 
 /* Subtle translation on hover for interactive feel in both modes */
@@ -520,11 +615,39 @@
 }
 
 @keyframes shine-sweep {
-  0%, 10% {
+
+  0%,
+  10% {
     background-position: 200% 0;
   }
-  70%, 100% {
+
+  70%,
+  100% {
     background-position: -200% 0;
   }
 }
 
+/* Utility to completely hide scrollbars */
+.scrollbar-hide,
+.scrollbar-none {
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Enforce max weight of medium (500) inside the workflow canvas */
+.workflow-canvas-container .font-bold,
+.workflow-canvas-container .font-semibold,
+.workflow-canvas-container font-bold,
+.workflow-canvas-container font-semibold,
+.workflow-canvas-container th {
+  font-weight: 500 !important;
+}
