@@ -1036,6 +1036,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                           onRestart={handleRestartPlayback}
                           chatContainerRef={chatContainerRef}
                           isMobile={true}
+                          onArtifactClick={() => handleMobileTabChange('preview')}
                         />
                       </div>
                     )}
@@ -1070,7 +1071,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
         
         {/* Desktop Header */}
         <header className="bg-background/80 backdrop-blur-md border-b border-border/50 h-12 flex-shrink-0">
-          <div className="flex h-full items-center justify-between px-4">
+          <div className="flex h-full items-center justify-between pl-4 pr-2">
             
             {/* Header Left (macOS Style Window Controls + URL bar / Window Title) */}
             <div className="flex flex-shrink-0 items-center gap-4 transition-all duration-300 w-[36%]">
@@ -1090,9 +1091,8 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Header Middle (Empty) */}
             <div className="flex flex-1 items-center justify-center" />
 
-            {/* Header Right (Empty) */}
             {/* Header Right */}
-            <div className="flex-shrink-0 flex items-center justify-end px-4">
+            <div className="flex-shrink-0 flex items-center justify-end">
               <button 
                 onClick={handleRestartPlayback}
                 className="text-foreground/75 hover:text-foreground text-[10px] font-semibold flex items-center gap-1.5 cursor-pointer transition-colors border border-border bg-card hover:bg-accent px-3 py-1 rounded-full"
@@ -1185,6 +1185,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                   toolCompleted={toolCompleted}
                   onRestart={handleRestartPlayback}
                   chatContainerRef={chatContainerRef}
+                  onArtifactClick={() => setActiveRightTab('preview')}
                 />
               </>
             )}
@@ -1298,7 +1299,8 @@ const ChatSidebar = ({
   toolCompleted,
   onRestart,
   chatContainerRef,
-  isMobile = false
+  isMobile = false,
+  onArtifactClick
 }: {
   revealedMessages: any[];
   isTyping: boolean;
@@ -1307,6 +1309,7 @@ const ChatSidebar = ({
   onRestart: () => void;
   chatContainerRef: React.RefObject<HTMLDivElement | null>;
   isMobile?: boolean;
+  onArtifactClick?: () => void;
 }) => {
   return (
     <div className="flex flex-1 min-h-0 flex-col bg-card select-none">
@@ -1361,14 +1364,17 @@ const ChatSidebar = ({
 
               {/* Tool Execution Card inside Chat */}
               {msg.toolCall && (
-                <div className="flex items-start w-full">
-                  <div className="bg-[#FAF9F5] dark:bg-muted/10 border border-border/80 rounded-2xl p-4 flex items-center justify-between text-left w-full max-w-[90%] shadow-2xs relative overflow-hidden">
+                <button 
+                  onClick={onArtifactClick}
+                  className="flex items-start w-full cursor-pointer text-left focus:outline-none"
+                >
+                  <div className="bg-[#FAF9F5] dark:bg-muted/10 border border-border/80 rounded-xl p-3 flex items-center justify-between w-full max-w-[85%] relative overflow-hidden transition-colors hover:bg-[#F7F5EE] dark:hover:bg-muted/15">
                     {/* Left text portion */}
                     <div className="flex-1 min-w-0 z-10">
-                      <div className={`font-semibold text-foreground truncate ${isMobile ? 'text-[15px]' : 'text-sm'}`}>
+                      <div className={`font-semibold text-foreground truncate ${isMobile ? 'text-sm' : 'text-xs'}`}>
                         {getToolCallTitle(msg.toolCall.name)}
                       </div>
-                      <div className={`text-muted-foreground/75 mt-0.5 flex items-center gap-1.5 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
+                      <div className={`text-muted-foreground/75 mt-0.5 flex items-center gap-1.5 ${isMobile ? 'text-xs' : 'text-[10px]'}`}>
                         {activeToolRun === msg.toolCall.name && !toolCompleted ? (
                           <>
                             <Loader2 className="h-3 w-3 animate-spin text-primary" />
@@ -1381,13 +1387,13 @@ const ChatSidebar = ({
                     </div>
 
                     {/* Right rotated card file icon */}
-                    <div className="z-10 ml-4 flex-shrink-0 flex items-center justify-center">
-                      <div className="bg-background dark:bg-card border border-border/80 shadow-2xs rounded-xl p-2.5 flex items-center justify-center w-10 h-14 transform rotate-[6deg] -mr-1">
-                        <FileText className="h-5.5 w-5.5 text-foreground/80" />
+                    <div className="z-10 ml-3 flex-shrink-0 flex items-center justify-center">
+                      <div className="bg-background dark:bg-card border border-border/80 rounded-lg p-2 flex items-center justify-center w-9 h-12 transform rotate-[6deg] -mr-1">
+                        <FileText className="h-4.5 w-4.5 text-foreground/80" />
                       </div>
                     </div>
                   </div>
-                </div>
+                </button>
               )}
             </div>
           );
