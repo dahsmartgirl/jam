@@ -107,11 +107,11 @@ export default function Changelog() {
       {/* Footer Link */}
       <div className="mt-8 text-left max-w-4xl border-t border-border/20 pt-6">
         <a 
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium" 
+          className="group inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors font-medium" 
           href="/changelog"
         >
-          See all updates
-          <ArrowRight className="h-4 w-4" />
+          <span>See all updates</span>
+          <ArrowRight className="h-3.5 w-3.5 ml-1.5 transition-transform duration-300 ease-out group-hover:translate-x-1" />
         </a>
       </div>
     </section>

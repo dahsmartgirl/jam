@@ -50,11 +50,11 @@ export default function App() {
 
       {/* 2. Sticky Growth Engineering Manifesto Bar */}
       <a 
-        className="border-border dark:bg-background sticky top-12 z-50 block w-full border-b bg-[#FAF9F5] py-2.5 text-center text-sm transition-opacity hover:opacity-80" 
+        className="border-border dark:bg-background group sticky top-12 z-50 block w-full border-b bg-[#FAF9F5] py-2.5 text-center text-sm" 
         href="/manifesto"
       >
         <span className="text-foreground">Growth Engineering: Manifesto</span>{' '}
-        <span className="font-medium text-primary">Read now →</span>
+        <span className="font-medium text-primary inline-flex items-center">Read now <span className="inline-block ml-1 transition-transform duration-300 ease-out group-hover:translate-x-1">→</span></span>
       </a>
 
       {/* 3. Main Grid layout wrapper */}

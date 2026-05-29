@@ -112,11 +112,11 @@ export default function Footer() {
             </h2>
             <button 
               type="button" 
-              className="inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] bg-primary text-primary-foreground hover:bg-primary/90 h-11 rounded-full group px-8 py-5 text-lg"
+              className="btn-gradient-highlight group relative cursor-pointer inline-flex items-center justify-center gap-0 rounded-full py-1.5 px-5 text-center text-sm font-normal shadow-sm transition-all hover:opacity-90 active:brightness-95 bg-foreground text-background border border-transparent w-auto font-sans"
             >
-              <span>Get started</span>
+              <span>Start Jamming</span>
               <span className="inline-flex overflow-hidden max-w-0 ml-0 group-hover:max-w-6 group-hover:ml-2 transition-all duration-300 ease-out">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-arrow-right h-4 w-4 flex-shrink-0" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right h-4 w-4 flex-shrink-0" aria-hidden="true">
                   <path d="M5 12h14"></path>
                   <path d="m12 5 7 7-7 7"></path>
                 </svg>
