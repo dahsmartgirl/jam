@@ -53,8 +53,8 @@ export default function VisibilityScore() {
 
   // Extend chart to the end of the SVG grid (x = 600)
   const getX = (index: number) => 50 + (index / 28) * 550;
-  // Scaled Y up to 100% (height 150px, from y=170 at 0% to y=20 at 100%)
-  const getY = (val: number) => 170 - (val / 100) * 150;
+  // Scaled Y up to 100% (height 220px, from y=240 at 0% to y=20 at 100%)
+  const getY = (val: number) => 240 - (val / 100) * 220;
 
   // Render a smooth line using cubic bezier curves
   const makeSmoothPath = (key: 'chatgpt' | 'perplexity' | 'gemini' | 'claude') => {
@@ -126,7 +126,7 @@ export default function VisibilityScore() {
               </div>
 
               {/* Chart Area wrapper */}
-              <div className="mt-6 h-[260px]">
+              <div className="mt-6 h-auto aspect-[600/270] w-full md:h-[300px] md:aspect-auto">
                 <div 
                   data-slot="chart" 
                   data-chart="chart-_R_hhlav5tlb_"
@@ -134,7 +134,7 @@ export default function VisibilityScore() {
                 >
                   <svg 
                     className="w-full h-full cursor-crosshair" 
-                    viewBox="0 0 600 200" 
+                    viewBox="0 0 600 270" 
                     xmlns="http://www.w3.org/2000/svg"
                     onMouseMove={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
@@ -150,18 +150,18 @@ export default function VisibilityScore() {
                   >
                     {/* Grid Lines (scaled up to 100%, every 20%) */}
                     <line x1="50" y1="20" x2="600" y2="20" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
-                    <line x1="50" y1="50" x2="600" y2="50" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
-                    <line x1="50" y1="80" x2="600" y2="80" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
-                    <line x1="50" y1="110" x2="600" y2="110" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
-                    <line x1="50" y1="140" x2="600" y2="140" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
-                    <line x1="50" y1="170" x2="600" y2="170" stroke="currentColor" className="text-border/60" strokeWidth="1" />
+                    <line x1="50" y1="64" x2="600" y2="64" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="50" y1="108" x2="600" y2="108" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="50" y1="152" x2="600" y2="152" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="50" y1="196" x2="600" y2="196" stroke="currentColor" className="text-border/40" strokeWidth="1" strokeDasharray="4 4" />
+                    <line x1="50" y1="240" x2="600" y2="240" stroke="currentColor" className="text-border/60" strokeWidth="1" />
 
                     {/* X Axis vertical lines (extending all the way to x=600) */}
-                    <line x1="50" y1="20" x2="50" y2="170" stroke="currentColor" className="text-border/10" strokeWidth="1" />
-                    <line x1="187.5" y1="20" x2="187.5" y2="170" stroke="currentColor" className="text-border/10" strokeWidth="1" />
-                    <line x1="325" y1="20" x2="325" y2="170" stroke="currentColor" className="text-border/10" strokeWidth="1" />
-                    <line x1="462.5" y1="20" x2="462.5" y2="170" stroke="currentColor" className="text-border/10" strokeWidth="1" />
-                    <line x1="600" y1="20" x2="600" y2="170" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="50" y1="20" x2="50" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="187.5" y1="20" x2="187.5" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="325" y1="20" x2="325" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="462.5" y1="20" x2="462.5" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
+                    <line x1="600" y1="20" x2="600" y2="240" stroke="currentColor" className="text-border/10" strokeWidth="1" />
 
                     {/* Vertical hover line indicator (0.5px light grey) */}
                     {hoveredIndex !== null && (
@@ -169,7 +169,7 @@ export default function VisibilityScore() {
                         x1={getX(hoveredIndex)} 
                         y1="20" 
                         x2={getX(hoveredIndex)} 
-                        y2="170" 
+                        y2="240" 
                         stroke="rgba(156, 163, 175, 0.4)" 
                         strokeWidth="0.5" 
                         strokeDasharray="4 4"
@@ -184,18 +184,18 @@ export default function VisibilityScore() {
 
                     {/* Left Axis Labels - shifted to left boundary, scaled up to 100% */}
                     <text x="10" y="24" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">100%</text>
-                    <text x="10" y="54" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">80%</text>
-                    <text x="10" y="84" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">60%</text>
-                    <text x="10" y="114" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">40%</text>
-                    <text x="10" y="144" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">20%</text>
-                    <text x="10" y="174" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">0%</text>
+                    <text x="10" y="68" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">80%</text>
+                    <text x="10" y="112" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">60%</text>
+                    <text x="10" y="156" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">40%</text>
+                    <text x="10" y="200" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">20%</text>
+                    <text x="10" y="244" className="text-[10px] font-medium fill-muted-foreground" textAnchor="start">0%</text>
 
                     {/* X Axis labels (extending all the way to end at x=600) */}
-                    <text x="50" y="188" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 1</text>
-                    <text x="187.5" y="188" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 8</text>
-                    <text x="325" y="188" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 15</text>
-                    <text x="462.5" y="188" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 22</text>
-                    <text x="600" y="188" className="text-[9px] fill-muted-foreground" textAnchor="end">May 29</text>
+                    <text x="50" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 1</text>
+                    <text x="187.5" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 8</text>
+                    <text x="325" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 15</text>
+                    <text x="462.5" y="258" className="text-[9px] fill-muted-foreground" textAnchor="middle">May 22</text>
+                    <text x="600" y="258" className="text-[9px] fill-muted-foreground" textAnchor="end">May 29</text>
                   </svg>
 
                   {/* Tooltip Card detailing all percentages */}

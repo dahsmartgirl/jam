@@ -590,23 +590,23 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
       case 'rank-on-ai-search': {
         const report = scenario.messages[3].toolCall?.output as any;
         return (
-          <div className="p-5 overflow-y-auto h-full text-left bg-background text-foreground space-y-6">
+          <div className="p-5 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-6">
             {/* Top Score Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-border/50 pb-5">
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Citation Score</span>
+                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Citation Score</span>
                 <span className="text-3xl font-light text-foreground mt-1">7%</span>
-                <span className="text-[10px] text-muted-foreground/80 mt-1">13 of 184 responses</span>
+                <span className="text-xs text-muted-foreground/80 mt-1">13 of 184 responses</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Identified Gaps</span>
+                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Identified Gaps</span>
                 <span className="text-3xl font-light text-foreground mt-1">6 Gaps</span>
-                <span className="text-[10px] text-muted-foreground/80 mt-1">Stale & missing content</span>
+                <span className="text-xs text-muted-foreground/80 mt-1">Stale & missing content</span>
               </div>
               <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">Content Freshness</span>
+                <span className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">Content Freshness</span>
                 <span className="text-3xl font-light text-foreground mt-1">68%</span>
-                <span className="text-[10px] text-muted-foreground/80 mt-1">19 of 28 pages fresh</span>
+                <span className="text-xs text-muted-foreground/80 mt-1">19 of 28 pages fresh</span>
               </div>
             </div>
 
@@ -618,14 +618,14 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                   const percent = Math.round((stats.ourSiteCited / stats.total) * 100);
                   return (
                     <div key={platform} className="bg-muted/10 border border-border/30 p-3 rounded-lg flex flex-col">
-                      <div className="flex justify-between items-center text-xs font-semibold">
+                      <div className="flex justify-between items-center text-sm font-semibold">
                         <span>{platform}</span>
                         <span className="text-foreground">{percent}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-muted/40 rounded-full overflow-hidden mt-2">
+                      <div className="h-2.5 w-full bg-muted/40 rounded-full overflow-hidden mt-2">
                         <div className="h-full bg-foreground rounded-full" style={{ width: `${percent}%` }} />
                       </div>
-                      <span className="text-[9px] text-muted-foreground/70 mt-1.5">{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
+                      <span className="text-[11px] text-muted-foreground/70 mt-1.5">{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
                     </div>
                   );
                 })}
@@ -638,12 +638,12 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Cited Brands count</h4>
                 <div className="border border-border rounded-xl bg-card p-4 space-y-3">
                   {report?.citedBrands.map((b: any) => (
-                    <div key={b.brand} className="space-y-1 text-xs">
+                    <div key={b.brand} className="space-y-1 text-sm">
                       <div className="flex justify-between font-medium">
                         <span className={b.brand.includes('Us') ? 'text-foreground font-bold' : 'text-foreground/75'}>{b.brand}</span>
                         <span className="text-muted-foreground">{b.count} mentions</span>
                       </div>
-                      <div className="h-2 w-full bg-muted/40 rounded-full overflow-hidden">
+                      <div className="h-3 w-full bg-muted/40 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full ${b.brand.includes('Us') ? 'bg-foreground' : 'bg-foreground/20'}`} 
                           style={{ width: `${b.pct}%` }} 
@@ -657,11 +657,11 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
               {/* Gaps List */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Identified Opportunity Gaps</h4>
-                <div className="border border-border rounded-xl bg-card p-4 text-xs divide-y divide-border/30 max-h-[220px] overflow-y-auto">
+                <div className="border border-border rounded-xl bg-card p-4 text-sm divide-y divide-border/30 max-h-[220px] overflow-y-auto">
                   {report?.gaps.map((gap: any, i: number) => (
                     <div key={i} className="py-2.5 first:pt-0 last:pb-0">
                       <div className="font-semibold text-foreground truncate">{gap.question}</div>
-                      <div className="text-muted-foreground/80 text-[10px] mt-0.5">{gap.opportunity}</div>
+                      <div className="text-muted-foreground/80 text-xs mt-0.5">{gap.opportunity}</div>
                     </div>
                   ))}
                 </div>
@@ -674,34 +674,34 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
       case 'monitor-social': {
         const report = scenario.messages[3].toolCall?.output as any;
         return (
-          <div className="p-4 overflow-y-auto h-full text-left bg-background text-foreground space-y-4">
+          <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-border/50">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Social Lead Stream</span>
-              <span className="text-[9px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} hits found</span>
+              <span className="text-[11px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} hits found</span>
             </div>
 
             <div className="space-y-3.5">
               {report?.posts.map((post: any) => (
                 <div key={post.id} className="border border-border rounded-xl bg-card p-4 hover:shadow-2xs transition-shadow">
                   {/* Post Header */}
-                  <div className="flex items-center gap-2 text-xs">
-                    <div className="bg-muted text-foreground/80 font-mono text-[9px] px-2 py-0.5 rounded border border-border/30">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="bg-muted text-foreground/80 font-mono text-[11px] px-2 py-0.5 rounded border border-border/30">
                       {post.platform === 'twitter' ? 'X/Twitter' : 'Reddit'}
                     </div>
                     <span className="font-semibold text-foreground">{post.authorName}</span>
-                    {post.authorHandle && <span className="text-muted-foreground/75 text-[10px]">@{post.authorHandle}</span>}
-                    {post.subreddit && <span className="text-foreground/70 font-mono text-[9px] font-semibold">{post.subreddit}</span>}
-                    <span className="text-muted-foreground/50 text-[10px] ml-auto font-mono">
+                    {post.authorHandle && <span className="text-muted-foreground/75 text-xs">@{post.authorHandle}</span>}
+                    {post.subreddit && <span className="text-foreground/70 font-mono text-[11px] font-semibold">{post.subreddit}</span>}
+                    <span className="text-muted-foreground/50 text-xs ml-auto font-mono">
                       {post.followers ? `Followers: ${post.followers}` : `Ratio: ${post.upvoteRatio}`}
                     </span>
                   </div>
 
                   {/* Post Content */}
-                  {post.title && <div className="font-bold text-xs mt-2 text-foreground">{post.title}</div>}
-                  <p className="text-xs text-foreground/85 mt-1.5 leading-relaxed font-normal">{post.text}</p>
+                  {post.title && <div className="font-bold text-sm mt-2 text-foreground">{post.title}</div>}
+                  <p className="text-sm text-foreground/85 mt-1.5 leading-relaxed font-normal">{post.text}</p>
 
                   {/* Engagement Footer */}
-                  <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground/80 border-t border-border/30 pt-2 font-mono">
+                  <div className="flex gap-4 mt-3 text-xs text-muted-foreground/80 border-t border-border/30 pt-2 font-mono">
                     <span>Likes: {post.engagement.likes}</span>
                     <span>Comments: {post.engagement.comments}</span>
                     {post.engagement.shares !== undefined && <span>Retweets: {post.engagement.shares}</span>}
@@ -716,14 +716,14 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
       case 'find-prospects': {
         const report = scenario.messages[1].toolCall?.output as any;
         return (
-          <div className="p-4 overflow-y-auto h-full text-left bg-background text-foreground flex flex-col">
+          <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground flex flex-col">
             <div className="flex justify-between items-center pb-3 border-b border-border/50 flex-shrink-0">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Prospecting CRM list</span>
-              <span className="text-[9px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} leads enriched</span>
+              <span className="text-[11px] border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono">{report?.totalFound} leads enriched</span>
             </div>
 
             <div className="flex-1 overflow-auto mt-3">
-              <table className="w-full text-left border-collapse text-xs">
+              <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                     <th className="p-2 w-8"></th>
@@ -760,12 +760,12 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
         const report = scenario.messages[3].toolCall?.output as any;
         const currentDraft = report?.drafts[selectedEmailIdx];
         return (
-          <div className="h-full flex text-left bg-background text-foreground select-none">
+          <div className="h-full flex text-left bg-transparent text-foreground select-none">
             {/* Email Drafts List Sidebar */}
-            <div className="w-2/5 border-r border-border flex flex-col h-full bg-muted/5">
-              <div className="p-3 border-b border-border text-xs font-semibold text-muted-foreground flex justify-between items-center">
+            <div className="w-2/5 border-r border-border flex flex-col h-full bg-background/80 backdrop-blur-xs">
+              <div className="p-3 border-b border-border text-sm font-semibold text-muted-foreground flex justify-between items-center">
                 <span>Leads Queue</span>
-                <span className="font-mono text-[10px]">{report?.totalCount} drafts</span>
+                <span className="font-mono text-xs">{report?.totalCount} drafts</span>
               </div>
               <div className="flex-1 overflow-y-auto divide-y divide-border/30">
                 {report?.drafts.map((d: any, idx: number) => (
@@ -776,9 +776,9 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                       selectedEmailIdx === idx ? 'bg-muted/20 border-l-4 border-foreground' : 'hover:bg-muted/10'
                     }`}
                   >
-                    <span className="text-xs font-bold text-foreground">{d.toName}</span>
-                    <span className="text-[10px] text-muted-foreground truncate">{d.toEmail}</span>
-                    <span className="text-[10px] text-foreground/60 truncate font-mono mt-1">{d.subject}</span>
+                    <span className="text-sm font-bold text-foreground">{d.toName}</span>
+                    <span className="text-xs text-muted-foreground truncate">{d.toEmail}</span>
+                    <span className="text-xs text-foreground/60 truncate font-mono mt-1">{d.subject}</span>
                   </button>
                 ))}
               </div>
@@ -787,22 +787,22 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             {/* Email Detail Pane */}
             <div className="w-3/5 p-5 flex flex-col h-full overflow-y-auto">
               {currentDraft ? (
-                <div className="space-y-4 text-xs h-full flex flex-col">
+                <div className="space-y-4 text-sm h-full flex flex-col">
                   <div className="space-y-2 border-b border-border/50 pb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-12 font-medium">To:</span>
                       <span className="font-semibold">{currentDraft.toName}</span>
-                      <span className="text-muted-foreground font-mono text-[10px]">({currentDraft.toEmail})</span>
+                      <span className="text-muted-foreground font-mono text-xs">({currentDraft.toEmail})</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground w-12 font-medium">Subject:</span>
                       <span className="font-semibold font-mono text-foreground">{currentDraft.subject}</span>
                     </div>
                   </div>
-                  <div className="flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono text-[10px] leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px]">
+                  <div className="flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono text-xs leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px]">
                     {currentDraft.body}
                   </div>
-                  <div className="flex items-center justify-between text-[9px] text-muted-foreground font-mono">
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
                     <span>* AI Personalized variables auto-mapped</span>
                     <button className="bg-foreground text-background font-semibold px-3 py-1 rounded-full hover:opacity-90 cursor-pointer shadow-xs transition-opacity">
                       Send now
@@ -822,15 +822,15 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
       case 'run-seo-audit': {
         const report = scenario.messages[3].toolCall?.output as any;
         return (
-          <div className="p-4 overflow-y-auto h-full text-left bg-background text-foreground space-y-6">
+          <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-6">
             {/* Keywords opportunities table */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Keyword Research opportunities</h4>
-                <span className="text-[10px] text-foreground/60 font-semibold">* Selected low competition keywords</span>
+                <span className="text-xs text-foreground/60 font-semibold">* Selected low competition keywords</span>
               </div>
               <div className="border border-border rounded-xl bg-card overflow-hidden">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="w-full text-left border-collapse text-sm">
                   <thead>
                     <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Keyword</th>
@@ -845,7 +845,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                       <tr key={i} className={`hover:bg-muted/10 transition-colors ${k.difficulty < 30 ? 'bg-muted/5' : ''}`}>
                         <td className="p-2 font-medium text-foreground">
                           {k.keyword}
-                          {k.difficulty < 30 && <span className="ml-2 bg-muted text-foreground border border-border/30 font-mono text-[8px] font-bold px-1.5 py-0.5 rounded">low diff</span>}
+                          {k.difficulty < 30 && <span className="ml-2 bg-muted text-foreground border border-border/30 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded">low diff</span>}
                         </td>
                         <td className="p-2 text-right font-mono">{k.volume.toLocaleString()}</td>
                         <td className="p-2 text-center font-mono">
@@ -855,7 +855,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                         </td>
                         <td className="p-2 text-right font-mono">{k.cpc}</td>
                         <td className="p-2 text-center">
-                          <span className="bg-foreground/5 text-foreground/60 text-[9px] px-1.5 py-0.5 rounded-full font-medium">{k.intent}</span>
+                          <span className="bg-foreground/5 text-foreground/60 text-[11px] px-1.5 py-0.5 rounded-full font-medium">{k.intent}</span>
                         </td>
                       </tr>
                     ))}
@@ -868,7 +868,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
             <div className="space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Competitor SERP analysis</h4>
               <div className="border border-border rounded-xl bg-card overflow-hidden">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="w-full text-left border-collapse text-sm">
                   <thead>
                     <tr className="bg-muted/20 border-b border-border text-muted-foreground font-semibold">
                       <th className="p-2">Domain</th>
@@ -924,16 +924,16 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
       <div className="overflow-hidden md:hidden" style={{ containerType: 'inline-size' }}>
         <div style={{ height: 'calc(760 / 430 * 100cqw)' }}>
           <div 
-            className="border-border bg-background flex flex-col overflow-hidden border-b" 
+            className="border-border bg-transparent flex flex-col overflow-hidden border-b" 
             style={{ width: '430px', height: '760px', transform: 'scale(calc(100cqw / 430px))', transformOrigin: 'top left' }}
           >
             <div className="flex h-full flex-col">
               
               {/* Mobile inner tabs bar */}
-              <div className="border-border bg-muted/30 flex border-b md:hidden">
+              <div className="border-border bg-background flex border-b md:hidden">
                 <button 
                   onClick={() => setMobileSubTab('chat')}
-                  className={`flex-1 border-b-2 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
+                  className={`flex-1 border-b-2 py-3.5 text-base font-semibold transition-colors cursor-pointer ${
                     mobileSubTab === 'chat' ? 'border-primary text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground border-transparent'
                   }`}
                 >
@@ -941,7 +941,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                 </button>
                 <button 
                   onClick={() => setMobileSubTab('preview')}
-                  className={`flex-1 border-b-2 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
+                  className={`flex-1 border-b-2 py-3.5 text-base font-semibold transition-colors cursor-pointer ${
                     mobileSubTab === 'preview' ? 'border-primary text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground border-transparent'
                   }`}
                 >
@@ -950,7 +950,7 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                 {hasWorkflow && (
                   <button 
                     onClick={() => setMobileSubTab('workflow')}
-                    className={`flex-1 border-b-2 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 border-b-2 py-3.5 text-base font-semibold transition-colors cursor-pointer ${
                       mobileSubTab === 'workflow' ? 'border-primary text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground border-transparent'
                     }`}
                   >
@@ -974,13 +974,13 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                   </div>
                 )}
                 {mobileSubTab === 'preview' && (
-                  <div className="w-full h-full bg-background overflow-hidden">
+                  <div className="w-full h-full bg-transparent overflow-hidden">
                     {renderPreviewContent()}
                   </div>
                 )}
                 {mobileSubTab === 'workflow' && hasWorkflow && (
                   <div className="w-full h-full flex flex-col p-2 relative">
-                    <div className="h-full flex flex-col border border-border rounded-lg bg-background overflow-hidden relative">
+                    <div className="h-full flex flex-col border border-border rounded-lg bg-transparent overflow-hidden relative">
                       <WorkflowDiagram 
                         steps={scenario.workflowSteps} 
                         nodeStates={workflowNodeStates}
@@ -1390,7 +1390,7 @@ const WorkflowDiagram = ({
           
           {steps.map((step, idx) => {
             if (idx === steps.length - 1) return null;
-            const startX = 260 + idx * 330;
+            const startX = 290 + idx * 330;
             const endX = 350 + idx * 330;
             const sourceState = nodeStates[step.id];
             const isFinished = sourceState === 'completed';
@@ -1433,7 +1433,7 @@ const WorkflowDiagram = ({
             <div 
               key={node.id}
               className="absolute text-left group transition-all duration-300"
-              style={{ left: `${leftOffset}px`, top: '100px', width: '240px', height: '160px' }}
+              style={{ left: `${leftOffset}px`, top: '90px', width: '270px', height: '180px' }}
             >
               {/* Target Handle Dot (Left) */}
               {index > 0 && (
@@ -1497,33 +1497,33 @@ const WorkflowDiagram = ({
                 {/* Upper portion */}
                 <div className="bg-muted/10 h-[90px] overflow-hidden flex flex-col p-2 select-none border-b border-border/40">
                   <div className="flex items-center gap-1.5 mb-1.5 flex-shrink-0">
-                    <span className="text-foreground/60 text-[9px] font-semibold uppercase tracking-wider">
+                    <span className="text-foreground/60 text-[11px] font-semibold uppercase tracking-wider">
                       {isCompleted ? 'Step Complete' : isRunning ? 'Executing' : 'Waiting'}
                     </span>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-center text-center px-2">
                     {isCompleted ? (
-                      <span className="text-foreground/80 text-[10px] font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[210px] truncate shadow-2xs">
+                      <span className="text-foreground/80 text-xs font-mono leading-normal font-normal bg-background border border-border/30 rounded py-1 px-2 max-w-[240px] truncate shadow-2xs">
                         {node.output}
                       </span>
                     ) : isRunning ? (
-                      <div className="flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono text-[10px]">
+                      <div className="flex items-center justify-center gap-1.5 text-foreground/80 font-normal font-mono text-xs">
                         <Loader2 className="h-3 w-3 animate-spin text-foreground/50" /> running agent...
                       </div>
                     ) : (
-                      <span className="text-foreground/30 text-[10px] italic">Queued in sequence</span>
+                      <span className="text-foreground/30 text-xs italic">Queued in sequence</span>
                     )}
                   </div>
                 </div>
 
                 {/* Lower portion */}
                 <div className="px-4 py-2.5 bg-card flex flex-col justify-center flex-1">
-                  <div className="text-[13px] font-bold text-foreground truncate leading-tight">
+                  <div className="text-[15px] font-bold text-foreground truncate leading-tight">
                     {node.label}
                   </div>
                   <div className="flex items-center justify-between mt-1.5 gap-2">
-                    <span className="text-[10px] text-muted-foreground truncate flex-1 font-normal">
+                    <span className="text-xs text-muted-foreground truncate flex-1 font-normal">
                       {node.category}
                     </span>
                     <div className="flex items-center shrink-0">

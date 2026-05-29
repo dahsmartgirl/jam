@@ -68,8 +68,8 @@ export default function App() {
           <div className="relative">
             <div className="border-border relative flex flex-col overflow-hidden border-b md:h-[min(1000px,90vh)] md:min-h-[700px]">
               
-              {/* Overlay backgrounds for desktop */}
-              <div className="h-full w-full overflow-hidden absolute inset-0 hidden md:block">
+              {/* Overlay backgrounds */}
+              <div className="h-full w-full overflow-hidden absolute inset-0">
                 <div 
                   aria-hidden="true" 
                   className="absolute -inset-[5%] dark:hidden" 
