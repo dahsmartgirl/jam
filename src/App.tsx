@@ -163,7 +163,7 @@ export default function App() {
           <div className="border-border border-t" />
 
           {/* J. Changelog Updates Section */}
-          <Changelog />
+          <Changelog darkMode={darkMode} />
 
           <div className="border-border border-t" />
 
@@ -174,7 +174,7 @@ export default function App() {
       </main>
 
       {/* L. Page Footer and CTA */}
-      <Footer />
+      <Footer darkMode={darkMode} />
     </div>
   );
 }
