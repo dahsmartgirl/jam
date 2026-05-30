@@ -157,7 +157,6 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    transition: background-color 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
   }
 
@@ -472,19 +471,19 @@
   opacity: 0.95;
 }
 
-/* Custom Scrollbar Styles — visible & elegant overlay */
+/* Custom Scrollbar Styles — ultra-thin overlay */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(16, 16, 16, 0.28) transparent;
+  scrollbar-color: rgba(16, 16, 16, 0.12) transparent;
 }
 
 .dark * {
-  scrollbar-color: rgba(242, 241, 243, 0.25) transparent;
+  scrollbar-color: rgba(242, 241, 243, 0.12) transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -492,13 +491,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(16, 16, 16, 0.25);
+  background: rgba(16, 16, 16, 0.10);
   border-radius: 9999px;
   transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 16, 16, 0.45);
+  background: rgba(16, 16, 16, 0.25);
 }
 
 ::-webkit-scrollbar-corner {
@@ -506,11 +505,11 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(242, 241, 243, 0.22);
+  background: rgba(242, 241, 243, 0.10);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(242, 241, 243, 0.45);
+  background: rgba(242, 241, 243, 0.25);
 }
 
 /* Global 0.5px border and outline width overrides */
@@ -650,4 +649,12 @@
 .workflow-canvas-container font-semibold,
 .workflow-canvas-container th {
   font-weight: 500 !important;
+}
+
+/* Disable transitions temporarily during theme toggle */
+.theme-toggling,
+.theme-toggling * {
+  transition: none !important;
+  animation-delay: 0s !important;
+  animation-duration: 0s !important;
 }

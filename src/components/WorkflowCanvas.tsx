@@ -955,17 +955,18 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
   return (
     <div className="w-full h-full flex flex-col min-h-0 bg-background select-none workflow-canvas-container">
       
-      {/* 1. Mobile viewport layout (<md:hidden) */}
-      <div className="overflow-hidden md:hidden" style={{ containerType: 'inline-size' }}>
-        <div style={{ height: 'calc(760 / 430 * 100cqw)' }}>
-          <div 
-            className="border-border bg-transparent flex flex-col overflow-hidden border-b" 
-            style={{ width: '430px', height: '760px', transform: 'scale(calc(100cqw / 430px))', transformOrigin: 'top left' }}
-          >
-            <div className="flex h-full flex-col">
-              
-              {/* Mobile inner tabs bar */}
-              <div className="border-border bg-background flex border-b md:hidden relative">
+      {/* 1. Mobile viewport layout (<lg:hidden) */}
+      <div className="overflow-hidden lg:hidden flex justify-center bg-transparent w-full">
+        <div className="w-full sm:max-w-[430px] flex justify-center" style={{ containerType: 'inline-size' }}>
+          <div className="w-full relative overflow-hidden" style={{ height: 'calc(760 / 430 * 100cqw)' }}>
+            <div 
+              className="border-border bg-transparent flex flex-col overflow-hidden border-b" 
+              style={{ width: '430px', height: '760px', transform: 'scale(calc(100cqw / 430px))', transformOrigin: 'top left' }}
+            >
+              <div className="flex h-full flex-col">
+                
+                {/* Mobile inner tabs bar */}
+                <div className="border-border bg-background flex border-b lg:hidden relative">
                 <button 
                   onClick={() => handleMobileTabChange('chat')}
                   className={`relative flex-1 py-3.5 text-base font-semibold transition-colors cursor-pointer ${
@@ -1080,9 +1081,10 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
           </div>
         </div>
       </div>
+      </div>
 
-      {/* 2. Desktop split-screen layout (md:flex) */}
-      <div className="flex h-full flex-col min-h-0 flex-1 hidden md:flex">
+      {/* 2. Desktop split-screen layout (lg:flex) */}
+      <div className="flex h-full flex-col min-h-0 flex-1 hidden lg:flex">
         
         {/* Desktop Header */}
         <header className="bg-background/80 backdrop-blur-md border-b border-border/50 h-12 flex-shrink-0">

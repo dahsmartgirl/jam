@@ -22,12 +22,23 @@ export default function App() {
 
   useEffect(() => {
     const root = window.document.documentElement;
+    root.classList.add('theme-toggling');
+
     if (darkMode) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
+
+    // Force layout reflow to apply color changes instantly
+    window.getComputedStyle(root).opacity;
+
+    const timer = setTimeout(() => {
+      root.classList.remove('theme-toggling');
+    }, 20);
+
+    return () => clearTimeout(timer);
   }, [darkMode]);
 
   // Tab Switcher for the top interactive workflow canvas
@@ -66,7 +77,7 @@ export default function App() {
 
           {/* B. Tabs Selector and Workflow Canvas */}
           <div className="relative">
-            <div className="border-border relative flex flex-col overflow-hidden border-b md:h-[min(1000px,90vh)] md:min-h-[700px]">
+            <div className="border-border relative flex flex-col overflow-hidden border-b lg:h-[min(1000px,90vh)] lg:min-h-[700px]">
               
               {/* Overlay backgrounds */}
               <div className="h-full w-full overflow-hidden absolute inset-0">
