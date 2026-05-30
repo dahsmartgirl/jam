@@ -55,15 +55,15 @@ export default function BlogSection() {
             {/* Right Side: Content aligned to top, read post button at bottom */}
             <div className="md:col-span-5 flex flex-col justify-between h-full py-1">
               <div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60 mb-2 font-mono">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground/60 mb-2 font-normal">
                   <span>{posts[0].date}</span>
                   <span>/</span>
                   <span>{posts[0].readTime}</span>
                 </div>
-                <h3 className="text-xl font-normal text-foreground group-hover:text-primary transition-colors leading-snug mb-3">
+                <h3 className="text-lg font-normal text-foreground group-hover:text-primary transition-colors leading-snug mb-3">
                   {posts[0].title}
                 </h3>
-                <p className="text-sm text-muted-foreground/75 leading-relaxed line-clamp-4">
+                <p className="text-sm text-muted-foreground/75 leading-relaxed font-normal line-clamp-4">
                   {posts[0].description}
                 </p>
               </div>
@@ -85,12 +85,12 @@ export default function BlogSection() {
             className="group flex flex-col justify-between p-6 md:p-8 lg:p-10 cursor-pointer text-left flex-1 min-h-[160px]"
           >
             <div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60 mb-2 font-mono">
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground/60 mb-2 font-normal">
                 <span>{posts[1].date}</span>
                 <span>/</span>
                 <span>{posts[1].readTime}</span>
               </div>
-              <h3 className="text-base font-normal text-foreground group-hover:text-primary transition-colors leading-snug">
+              <h3 className="text-lg font-normal text-foreground group-hover:text-primary transition-colors leading-snug">
                 {posts[1].title}
               </h3>
             </div>
@@ -107,12 +107,12 @@ export default function BlogSection() {
             className="group flex flex-col justify-between p-6 md:p-8 lg:p-10 cursor-pointer text-left flex-1 min-h-[160px]"
           >
             <div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground/60 mb-2 font-mono">
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground/60 mb-2 font-normal">
                 <span>{posts[2].date}</span>
                 <span>/</span>
                 <span>{posts[2].readTime}</span>
               </div>
-              <h3 className="text-base font-normal text-foreground group-hover:text-primary transition-colors leading-snug">
+              <h3 className="text-lg font-normal text-foreground group-hover:text-primary transition-colors leading-snug">
                 {posts[2].title}
               </h3>
             </div>
