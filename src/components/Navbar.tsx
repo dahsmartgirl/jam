@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, ChevronDown, ArrowRight } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ArrowRight, ArrowUpRight } from 'lucide-react';
 
 interface NavbarProps {
   darkMode: boolean;
@@ -51,22 +51,18 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               
               {/* Redesigned Sublinks Container */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
-                <div className="w-56 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-2 flex flex-col gap-0.5 font-sans">
-                  <a href="#aeo" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">AI Citations (AEO)</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Rank on AI Search engines</span>
+                <div className="w-48 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-1.5 flex flex-col gap-0.5 font-sans">
+                  <a href="#aeo" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    AI Citations (AEO)
                   </a>
-                  <a href="#inbox" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Email Outbound</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Direct deliverability at scale</span>
+                  <a href="#inbox" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Email Outbound
                   </a>
-                  <a href="#alerts" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Social Monitoring</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Listen and respond in real-time</span>
+                  <a href="#alerts" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Social Monitoring
                   </a>
-                  <a href="#automations" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Custom Workflows</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Branching logic node canvas</span>
+                  <a href="#automations" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Custom Workflows
                   </a>
                 </div>
               </div>
@@ -84,18 +80,23 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               
               {/* Redesigned Sublinks Container */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
-                <div className="w-48 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-2 flex flex-col gap-0.5 font-sans">
-                  <a href="/manifesto" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Manifesto</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Our growth engineering ideas</span>
+                <div className="w-44 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-1.5 flex flex-col gap-0.5 font-sans">
+                  <a href="/manifesto" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Manifesto
                   </a>
-                  <a href="#blog" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Blog</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">Marketing and AI guides</span>
+                  <a href="#blog" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Blog
                   </a>
-                  <a href="#changelog" className="flex flex-col px-3 py-2 rounded-lg text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150">
-                    <span className="text-xs font-semibold text-foreground">Changelog</span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5 leading-normal">See what we've built</span>
+                  <a href="#changelog" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Changelog
+                  </a>
+                  <a href="/docs" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 flex items-center justify-between">
+                    <span>Docs</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 opacity-60 flex-shrink-0" />
+                  </a>
+                  <a href="/opensource" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 flex items-center justify-between">
+                    <span>Opensource</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 opacity-60 flex-shrink-0" />
                   </a>
                 </div>
               </div>
@@ -164,6 +165,14 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
             <a href="/manifesto" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Manifesto</a>
             <a href="#blog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Blog</a>
             <a href="#changelog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Changelog</a>
+            <a href="/docs" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1 flex items-center gap-1.5">
+              <span>Docs</span>
+              <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />
+            </a>
+            <a href="/opensource" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1 flex items-center gap-1.5">
+              <span>Opensource</span>
+              <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />
+            </a>
           </div>
           <div className="flex flex-col gap-3 border-t border-border/40 pt-3">
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 py-1">Pricing</a>

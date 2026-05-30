@@ -472,19 +472,19 @@
   opacity: 0.95;
 }
 
-/* Custom Scrollbar Styles — ultra-thin overlay */
+/* Custom Scrollbar Styles — visible & elegant overlay */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(16, 16, 16, 0.12) transparent;
+  scrollbar-color: rgba(16, 16, 16, 0.28) transparent;
 }
 
 .dark * {
-  scrollbar-color: rgba(242, 241, 243, 0.12) transparent;
+  scrollbar-color: rgba(242, 241, 243, 0.25) transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -492,13 +492,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(16, 16, 16, 0.10);
+  background: rgba(16, 16, 16, 0.25);
   border-radius: 9999px;
   transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 16, 16, 0.25);
+  background: rgba(16, 16, 16, 0.45);
 }
 
 ::-webkit-scrollbar-corner {
@@ -506,11 +506,11 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(242, 241, 243, 0.10);
+  background: rgba(242, 241, 243, 0.22);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(242, 241, 243, 0.25);
+  background: rgba(242, 241, 243, 0.45);
 }
 
 /* Global 0.5px border and outline width overrides */
