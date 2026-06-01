@@ -52,17 +52,17 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               {/* Redesigned Sublinks Container */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
                 <div className="w-48 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-1.5 flex flex-col gap-0.5 font-sans">
-                  <a href="#aeo" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
-                    AI Citations (AEO)
+                  <a href="/products/aeo" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    AEO
                   </a>
-                  <a href="#inbox" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                  <a href="/products/email-outbound" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
                     Email Outbound
                   </a>
-                  <a href="#alerts" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                  <a href="/products/social-monitoring" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
                     Social Monitoring
                   </a>
-                  <a href="#automations" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
-                    Custom Workflows
+                  <a href="/products/short-form-content" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Short Form Content
                   </a>
                 </div>
               </div>
@@ -81,22 +81,22 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
               {/* Redesigned Sublinks Container */}
               <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 hidden group-hover:block z-50">
                 <div className="w-44 bg-background/95 backdrop-blur-xl border border-border shadow-xl rounded-xl p-1.5 flex flex-col gap-0.5 font-sans">
-                  <a href="/manifesto" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
-                    Manifesto
-                  </a>
                   <a href="#blog" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
                     Blog
-                  </a>
-                  <a href="#changelog" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
-                    Changelog
                   </a>
                   <a href="/docs" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 flex items-center justify-between">
                     <span>Docs</span>
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-60 flex-shrink-0" />
                   </a>
+                  <a href="/manifesto" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Manifesto
+                  </a>
                   <a href="/opensource" target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 flex items-center justify-between">
                     <span>Opensource</span>
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-60 flex-shrink-0" />
+                  </a>
+                  <a href="#changelog" className="px-3 py-1.5 rounded-lg text-sm font-normal text-foreground/80 hover:bg-accent hover:text-foreground transition-all duration-150 block text-left">
+                    Changelog
                   </a>
                 </div>
               </div>
@@ -155,24 +155,24 @@ export default function Navbar({ darkMode, setDarkMode }: NavbarProps) {
         <div className="md:hidden border-b border-border bg-background px-6 py-4 flex flex-col gap-4 shadow-md absolute w-full left-0 top-12 z-50">
           <div className="flex flex-col gap-2">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Product</span>
-            <a href="#aeo" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">AI Citations (AEO)</a>
-            <a href="#inbox" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Email Outbound</a>
-            <a href="#alerts" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Social Monitoring</a>
-            <a href="#automations" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Custom Workflows</a>
+            <a href="/products/aeo" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">AEO</a>
+            <a href="/products/email-outbound" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Email Outbound</a>
+            <a href="/products/social-monitoring" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Social Monitoring</a>
+            <a href="/products/short-form-content" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Short Form Content</a>
           </div>
           <div className="flex flex-col gap-2 border-t border-border/40 pt-3">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Resources</span>
-            <a href="/manifesto" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Manifesto</a>
             <a href="#blog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Blog</a>
-            <a href="#changelog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Changelog</a>
             <a href="/docs" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1 flex items-center gap-1.5">
               <span>Docs</span>
               <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />
             </a>
+            <a href="/manifesto" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Manifesto</a>
             <a href="/opensource" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1 flex items-center gap-1.5">
               <span>Opensource</span>
               <ArrowUpRight className="h-3.5 w-3.5 opacity-60" />
             </a>
+            <a href="#changelog" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 pl-3 py-1">Changelog</a>
           </div>
           <div className="flex flex-col gap-3 border-t border-border/40 pt-3">
             <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-foreground/80 py-1">Pricing</a>

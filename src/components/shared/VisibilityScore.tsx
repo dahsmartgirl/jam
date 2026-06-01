@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
-export default function VisibilityScore() {
+interface VisibilityScoreProps {
+  subtitle?: string;
+}
+
+export default function VisibilityScore({ 
+  subtitle = "Find where you're not being cited in all AI platforms." 
+}: VisibilityScoreProps) {
   // Color configuration from source
   const chatgptColor = 'oklch(0.62 0.21 257)';
   const perplexityColor = 'oklch(0.69 0.15 162)';
@@ -105,7 +111,7 @@ export default function VisibilityScore() {
             Find Your Gaps
           </h3>
           <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
-            Find where you&#x27;re not being cited in all AI platforms.
+            {subtitle}
           </p>
         </div>
 

@@ -543,6 +543,14 @@
   border-bottom-width: 0.5px !important;
 }
 
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-top-width: 0.5px !important;
+}
+
+.divide-x > :not([hidden]) ~ :not([hidden]) {
+  border-left-width: 0.5px !important;
+}
+
 .outline,
 .outline-1,
 .outline-2 {

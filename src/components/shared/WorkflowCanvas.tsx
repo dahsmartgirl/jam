@@ -53,6 +53,7 @@ interface WorkflowCanvasProps {
   activeTab: string; // 'seo' | 'social' | 'prospects' | 'emails' | 'audits'
   setActiveTab: (tab: string) => void;
   darkMode: boolean;
+  isFixedScenario?: boolean;
 }
 
 // Full Hydration Scenario Data from source.txt
@@ -396,7 +397,7 @@ const SCENARIOS = [
   }
 ];
 
-export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: WorkflowCanvasProps) {
+export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFixedScenario = false }: WorkflowCanvasProps) {
   // Find scenario based on active tab
   const scenario = useMemo(() => {
     return SCENARIOS.find(s => s.tabKey === activeTab) || SCENARIOS[0];
@@ -1153,34 +1154,42 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode }: Wo
                     
                     {/* Scenario filter dropdown */}
                     <div ref={dropdownRef} className="relative min-w-0">
-                      <button 
-                        onClick={() => setIsScenarioDropdownOpen(!isScenarioDropdownOpen)}
-                        className="flex items-center gap-1 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors cursor-pointer truncate"
-                      >
-                        <span className="truncate">{scenario.tabLabel}</span>
-                        <ChevronDown className={`h-3 w-3 flex-shrink-0 text-muted-foreground transition-transform ${isScenarioDropdownOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      {/* Dropdown menu */}
-                      {isScenarioDropdownOpen && (
-                        <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[180px]">
-                          {SCENARIOS.map(s => (
-                            <button
-                              key={s.id}
-                              onClick={() => {
-                                setActiveTab(s.tabKey);
-                                setIsScenarioDropdownOpen(false);
-                              }}
-                              className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
-                                s.tabKey === activeTab 
-                                  ? 'bg-muted/30 text-foreground font-semibold' 
-                                  : 'text-foreground/70 hover:bg-muted/15 hover:text-foreground'
-                              }`}
-                            >
-                              {s.tabLabel}
-                            </button>
-                          ))}
+                      {isFixedScenario ? (
+                        <div className="flex items-center gap-1 text-xs font-semibold text-foreground truncate select-none">
+                          <span className="truncate">{scenario.tabLabel}</span>
                         </div>
+                      ) : (
+                        <>
+                          <button 
+                            onClick={() => setIsScenarioDropdownOpen(!isScenarioDropdownOpen)}
+                            className="flex items-center gap-1 text-xs font-semibold text-foreground hover:text-foreground/80 transition-colors cursor-pointer truncate"
+                          >
+                            <span className="truncate">{scenario.tabLabel}</span>
+                            <ChevronDown className={`h-3 w-3 flex-shrink-0 text-muted-foreground transition-transform ${isScenarioDropdownOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                          
+                          {/* Dropdown menu */}
+                          {isScenarioDropdownOpen && (
+                            <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[180px]">
+                              {SCENARIOS.map(s => (
+                                <button
+                                  key={s.id}
+                                  onClick={() => {
+                                    setActiveTab(s.tabKey);
+                                    setIsScenarioDropdownOpen(false);
+                                  }}
+                                  className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
+                                    s.tabKey === activeTab 
+                                      ? 'bg-muted/30 text-foreground font-semibold' 
+                                      : 'text-foreground/70 hover:bg-muted/15 hover:text-foreground'
+                                  }`}
+                                >
+                                  {s.tabLabel}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
