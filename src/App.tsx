@@ -3,6 +3,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import AeoProduct from './pages/AeoProduct';
+import EmailOutbound from './pages/EmailOutbound';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -27,7 +28,13 @@ export default function App() {
       if (a && a.href && a.host === window.location.host) {
         const url = new URL(a.href);
         const path = url.pathname;
-        if (path === '/' || path === '/products/aeo' || path === '/products/aeo/') {
+        if (
+          path === '/' || 
+          path === '/products/aeo' || 
+          path === '/products/aeo/' ||
+          path === '/products/email-outbound' ||
+          path === '/products/email-outbound/'
+        ) {
           e.preventDefault();
           window.history.pushState(null, '', a.href);
           setCurrentPath(path);
@@ -66,6 +73,7 @@ export default function App() {
   }, [darkMode]);
 
   const isAeoRoute = currentPath === '/products/aeo' || currentPath === '/products/aeo/';
+  const isOutboundRoute = currentPath === '/products/email-outbound' || currentPath === '/products/email-outbound/';
 
   return (
     <div className="dark:bg-background min-h-screen bg-[#FAF9F5] text-foreground">
@@ -77,6 +85,8 @@ export default function App() {
 
       {isAeoRoute ? (
         <AeoProduct darkMode={darkMode} />
+      ) : isOutboundRoute ? (
+        <EmailOutbound darkMode={darkMode} />
       ) : (
         <>
           {/* Sticky Growth Engineering Manifesto Bar */}

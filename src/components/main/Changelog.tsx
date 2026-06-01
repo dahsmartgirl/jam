@@ -202,13 +202,13 @@ export default function Changelog({ darkMode = false }: { darkMode?: boolean }) 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 mt-6">
         {/* Left column: Accordion List */}
         <div className="md:col-span-7">
-          <div className="divide-y divide-border/25">
+          <div className="flex flex-col">
             {updates.map((update, idx) => {
               const isOpen = openIndex === idx;
               return (
                 <div 
                   key={idx} 
-                  className="py-6 first:pt-0 last:pb-0"
+                  className="py-6 border-b border-border/25 last:border-b-0 first:pt-0 last:pb-0"
                 >
                   {/* Responsive Grid layout */}
                   <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8 text-left">

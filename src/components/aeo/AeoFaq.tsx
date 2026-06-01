@@ -67,13 +67,13 @@ export default function AeoFaq() {
                   {/* Clickable Header */}
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : idx)}
-                    className="flex items-center justify-between w-full text-left group cursor-pointer py-1"
+                    className="flex items-start justify-between w-full text-left group cursor-pointer py-1"
                   >
                     <h3 className="text-foreground text-lg font-normal group-hover:text-primary transition-colors duration-150 pr-4">
                       {faq.question}
                     </h3>
                     <ChevronDown 
-                      className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                      className={`w-4 h-4 text-muted-foreground transition-transform duration-200 mt-1 shrink-0 ${
                         isOpen ? 'rotate-180 text-foreground' : 'group-hover:text-foreground'
                       }`}
                     />

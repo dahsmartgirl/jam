@@ -1,6 +1,22 @@
 import React from 'react';
 
-export default function LeadEnrichmentWarmUp() {
+interface LeadEnrichmentWarmUpProps {
+  variant?: 'home' | 'outbound';
+}
+
+export default function LeadEnrichmentWarmUp({ variant = 'home' }: LeadEnrichmentWarmUpProps) {
+  const isOutbound = variant === 'outbound';
+
+  const accounts = isOutbound ? [
+    { email: 'dave@getorbit.co', sent: 38, limit: 50, status: 'Healthy', statusColor: 'oklch(0.69 0.15 162)', width: '76%' },
+    { email: 'dave@gmail.com', sent: 24, limit: 40, status: 'Healthy', statusColor: 'oklch(0.69 0.15 162)', width: '60%' },
+    { email: 'dave@outlook.com', sent: 11, limit: 40, status: 'Ramping', statusColor: 'oklch(0.78 0.13 197)', width: '27.5%' }
+  ] : [
+    { email: 'you@getorbit.co', sent: 18, limit: 40, status: 'Healthy', statusColor: 'oklch(0.69 0.15 162)', width: '45%' },
+    { email: 'you@team.io', sent: 9, limit: 40, status: 'Ramping', statusColor: 'oklch(0.78 0.13 197)', width: '22.5%' },
+    { email: 'you@send.co', sent: 22, limit: 40, status: 'Healthy', statusColor: 'oklch(0.69 0.15 162)', width: '55%' }
+  ];
+
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 border-b border-border">
       {/* Column 1: Lead enrichment */}
@@ -130,7 +146,7 @@ export default function LeadEnrichmentWarmUp() {
               </div>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="font-semibold tabular-nums text-3xl leading-none tracking-tight">
-                  24%
+                  {isOutbound ? '21%' : '24%'}
                 </span>
                 <span className="flex items-baseline gap-0.5 text-xs font-medium whitespace-nowrap tabular-nums text-green-600 dark:text-green-400">
                   <span>↑</span>
@@ -178,8 +194,14 @@ export default function LeadEnrichmentWarmUp() {
               </div>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="font-semibold tabular-nums text-3xl leading-none tracking-tight">
-                  0.4%
+                  {isOutbound ? '0.5%' : '0.4%'}
                 </span>
+                {isOutbound && (
+                  <span className="flex items-baseline gap-0.5 text-xs font-medium whitespace-nowrap tabular-nums text-green-600 dark:text-green-400">
+                    <span>↓</span>
+                    0.3 pp
+                  </span>
+                )}
               </div>
               <div className="mt-3 h-6 w-full">
                 <svg viewBox="0 0 100 20" className="w-full h-full text-foreground/30 fill-none" preserveAspectRatio="none">
@@ -198,8 +220,14 @@ export default function LeadEnrichmentWarmUp() {
               </div>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="font-semibold tabular-nums text-3xl leading-none tracking-tight">
-                  3,204
+                  {isOutbound ? '2,640' : '3,204'}
                 </span>
+                {isOutbound && (
+                  <span className="flex items-baseline gap-0.5 text-xs font-medium whitespace-nowrap tabular-nums text-green-600 dark:text-green-400">
+                    <span>↑</span>
+                    287
+                  </span>
+                )}
               </div>
               <div className="mt-3 h-6 w-full">
                 <svg viewBox="0 0 100 20" className="w-full h-full text-foreground/30 fill-none" preserveAspectRatio="none">
@@ -210,75 +238,42 @@ export default function LeadEnrichmentWarmUp() {
           </div>
 
           {/* Deliverability Table */}
-          <div className="bg-card border-border/50 rounded-xl border mt-2">
-            <div className="px-4 py-3">
+          <div className="bg-card border-border/30 rounded-xl border mt-2">
+            <div className="px-4 py-3 border-b border-border/30">
               <p className="text-foreground text-[13px] font-medium">
                 Account deliverability
               </p>
             </div>
-            <div className="divide-border/30 border-border/40 divide-y border-t">
-              {/* you@getorbit.co */}
-              <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5">
-                <span className="text-foreground truncate text-xs">
-                  you@getorbit.co
-                </span>
-                <div className="inline-flex items-center gap-2">
-                  <div className="bg-muted relative h-1.5 w-16 overflow-hidden rounded-full">
-                    <div className="bg-foreground absolute h-full" style={{ width: '45%' }} aria-hidden="true" />
+            <div className="divide-border/30 divide-y">
+              {accounts.map((acct) => (
+                <div key={acct.email} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5">
+                  <span className="text-foreground truncate text-xs">
+                    {acct.email}
+                  </span>
+                  <div className="inline-flex items-center gap-2">
+                    <div className="bg-muted relative h-1.5 w-16 overflow-hidden rounded-full">
+                      <div 
+                        className="bg-foreground absolute h-full transition-all duration-500" 
+                        style={{ width: acct.width }} 
+                        aria-hidden="true" 
+                      />
+                    </div>
+                    <span className="text-muted-foreground text-[11px] tabular-nums">
+                      {acct.sent}/{acct.limit}
+                    </span>
                   </div>
-                  <span className="text-muted-foreground text-[11px] tabular-nums">
-                    18/40
-                  </span>
-                </div>
-                <div className="inline-flex items-center gap-1.5">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'oklch(0.69 0.15 162)' }} aria-hidden="true" />
-                  <span className="text-foreground text-xs">
-                    Healthy
-                  </span>
-                </div>
-              </div>
-
-              {/* you@team.io */}
-              <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5">
-                <span className="text-foreground truncate text-xs">
-                  you@team.io
-                </span>
-                <div className="inline-flex items-center gap-2">
-                  <div className="bg-muted relative h-1.5 w-16 overflow-hidden rounded-full">
-                    <div className="bg-foreground absolute h-full" style={{ width: '22.5%' }} aria-hidden="true" />
+                  <div className="inline-flex items-center gap-1.5">
+                    <span 
+                      className="inline-block h-1.5 w-1.5 rounded-full" 
+                      style={{ backgroundColor: acct.statusColor }} 
+                      aria-hidden="true" 
+                    />
+                    <span className="text-foreground text-xs">
+                      {acct.status}
+                    </span>
                   </div>
-                  <span className="text-muted-foreground text-[11px] tabular-nums">
-                    9/40
-                  </span>
                 </div>
-                <div className="inline-flex items-center gap-1.5">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'oklch(0.78 0.13 197)' }} aria-hidden="true" />
-                  <span className="text-foreground text-xs">
-                    Ramping
-                  </span>
-                </div>
-              </div>
-
-              {/* you@send.co */}
-              <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5">
-                <span className="text-foreground truncate text-xs">
-                  you@send.co
-                </span>
-                <div className="inline-flex items-center gap-2">
-                  <div className="bg-muted relative h-1.5 w-16 overflow-hidden rounded-full">
-                    <div className="bg-foreground absolute h-full" style={{ width: '55%' }} aria-hidden="true" />
-                  </div>
-                  <span className="text-muted-foreground text-[11px] tabular-nums">
-                    22/40
-                  </span>
-                </div>
-                <div className="inline-flex items-center gap-1.5">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'oklch(0.69 0.15 162)' }} aria-hidden="true" />
-                  <span className="text-foreground text-xs">
-                    Healthy
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

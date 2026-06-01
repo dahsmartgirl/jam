@@ -31,7 +31,12 @@ export default function Home({ darkMode }: HomeProps) {
       <div className="border-border border">
         
         {/* A. Hero Section */}
-        <Hero darkMode={darkMode} />
+        <Hero 
+          darkMode={darkMode} 
+          titleLine1="Marketing agents" 
+          titleTypewriter={['AI search', 'content enrichment', 'email outbound', 'brand awareness']} 
+          subtitle="Full-stack marketing agents that win you customers across every channel." 
+        />
 
         {/* B. Tabs Selector and Workflow Canvas */}
         <div className="relative">

@@ -16,6 +16,8 @@ export default function AeoCitationSources() {
     { domain: 'medium.com', count: 4, widthPercent: 9 },
     { domain: 'github.com', count: 3, widthPercent: 6 },
     { domain: 'news.ycombinator.com', count: 3, widthPercent: 6 },
+    { domain: 'techcrunch.com', count: 2, widthPercent: 4 },
+    { domain: 'nytimes.com', count: 2, widthPercent: 4 },
   ];
 
   return (

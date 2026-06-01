@@ -3,7 +3,8 @@ import { Download, ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
 type ContactField = 'name' | 'email' | 'title' | 'company' | 'location' | 'status';
 
-export default function ContactsTable() {
+export default function ContactsTable({ variant = 'home' }: { variant?: 'home' | 'outbound' }) {
+  const isOutbound = variant === 'outbound';
   const [search, setSearch] = useState('');
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
   const [sortField, setSortField] = useState<ContactField | null>(null);
@@ -75,18 +76,32 @@ export default function ContactsTable() {
   };
 
   return (
-    <div className="relative overflow-hidden p-6 lg:min-h-[520px] md:p-8 lg:p-10 flex flex-col justify-between">
+    <div className={
+      isOutbound 
+        ? "relative overflow-hidden p-6 md:p-8 lg:p-10 border-border border-b md:border-r md:border-b-0 h-auto md:h-[500px] md:min-h-[500px] flex flex-col justify-start bg-transparent"
+        : "relative overflow-hidden p-6 lg:min-h-[520px] md:p-8 lg:p-10 flex flex-col justify-between"
+    }>
       
       {/* Title */}
-      <div className="relative z-10 max-w-none lg:max-w-[44%]">
+      <div className={isOutbound ? "relative z-10 mb-2 max-w-none md:max-w-md" : "relative z-10 max-w-none lg:max-w-[44%]"}>
         <span className="feature-badge">Leads</span>
         <h3 className="text-foreground text-2xl font-light md:text-3xl">Find warm leads</h3>
-        <p className="text-muted-foreground/60 mt-1.5 text-base font-light">Surface contacts already in your orbit.</p>
+        <p className="text-muted-foreground/60 mt-1.5 text-base font-light">
+          {isOutbound ? "Pull a targeted list of the right people, ready to email." : "Surface contacts already in your orbit."}
+        </p>
       </div>
 
       {/* Table Overlay container on desktop */}
-      <div className="pointer-events-auto relative mt-6 w-full lg:absolute lg:top-8 lg:right-[-30%] lg:bottom-0 lg:left-[48%] lg:mt-0 lg:w-auto lg:top-10">
-        <div className="border-border bg-card max-h-[300px] overflow-x-auto overflow-y-hidden rounded-xl border lg:h-full lg:max-h-none lg:overflow-hidden lg:rounded-l-xl lg:rounded-r-none w-full lg:w-[650px] lg:w-[750px] select-none scrollbar-none">
+      <div className={
+        isOutbound
+          ? "border-border bg-card mt-4 max-h-[300px] w-full overflow-x-auto overflow-y-hidden rounded-xl border md:absolute md:inset-x-8 md:right-0 md:bottom-0 md:mt-0 md:h-[360px] md:max-h-none md:translate-y-3 md:overflow-hidden lg:inset-x-10"
+          : "pointer-events-auto relative mt-6 w-full lg:absolute lg:top-8 lg:right-[-30%] lg:bottom-0 lg:left-[48%] lg:mt-0 lg:w-auto lg:top-10"
+      }>
+        <div className={
+          isOutbound
+            ? "flex flex-col h-full"
+            : "border-border bg-card max-h-[300px] overflow-x-auto overflow-y-hidden rounded-xl border lg:h-full lg:max-h-none lg:overflow-hidden lg:rounded-l-xl lg:rounded-r-none w-full lg:w-[750px] select-none scrollbar-none"
+        }>
           <div className="flex flex-col h-full">
             
             {/* Header info */}
@@ -97,8 +112,8 @@ export default function ContactsTable() {
 
             {/* Filter and export */}
             <div className="flex flex-col gap-4 p-4 border-b border-border/40">
-              <div className="flex items-center justify-between gap-4">
-                <div className="relative flex-1 max-w-[300px]">
+              <div className={isOutbound ? "flex items-center gap-3" : "flex items-center justify-between gap-4"}>
+                <div className={isOutbound ? "relative max-w-[300px] w-full" : "relative flex-1 max-w-[300px]"}>
                   <svg 
                     className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" 
                     fill="none" 

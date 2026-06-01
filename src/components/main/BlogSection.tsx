@@ -77,12 +77,12 @@ export default function BlogSection() {
         </div>
 
         {/* Right Column (Posts 2 & 3 stacked, horizontally aligned with dividing line) */}
-        <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-border/30 flex flex-col divide-y divide-border/30">
+        <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-border/30 flex flex-col">
           
           {/* Post 2 */}
           <a 
             href={posts[1].href} 
-            className="group flex flex-col justify-between p-6 md:p-8 lg:p-10 cursor-pointer text-left flex-1 min-h-[160px]"
+            className="group flex flex-col justify-between p-6 md:p-8 lg:p-10 cursor-pointer text-left flex-1 min-h-[160px] border-b border-border/30"
           >
             <div>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground/60 mb-2 font-normal">

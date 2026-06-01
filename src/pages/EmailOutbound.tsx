@@ -1,19 +1,17 @@
 import React from 'react';
 import Hero from '../components/main/Hero';
 import WorkflowCanvas from '../components/shared/WorkflowCanvas';
-import VisibilityScore from '../components/shared/VisibilityScore';
-import AeoCompetitors from '../components/aeo/AeoCompetitors';
-import AeoTrackedPrompts from '../components/aeo/AeoTrackedPrompts';
-import AeoCitationMatrix from '../components/aeo/AeoCitationMatrix';
-import AeoCitationSources from '../components/aeo/AeoCitationSources';
-import AeoPublishContent from '../components/aeo/AeoPublishContent';
-import AeoFaq from '../components/aeo/AeoFaq';
+import ContactsTable from '../components/main/ContactsTable';
+import DraftsInYourVoice from '../components/outbound/DraftsInYourVoice';
+import LeadEnrichmentWarmUp from '../components/main/LeadEnrichmentWarmUp';
+import InboxManager from '../components/main/InboxManager';
+import OutboundFaq from '../components/outbound/OutboundFaq';
 
-interface AeoProductProps {
+interface EmailOutboundProps {
   darkMode: boolean;
 }
 
-export default function AeoProduct({ darkMode }: AeoProductProps) {
+export default function EmailOutbound({ darkMode }: EmailOutboundProps) {
   return (
     <main className="mx-auto max-w-[1800px] px-3 pt-4 sm:px-6 sm:pt-8 md:px-10 lg:px-16">
       <div className="border-border border">
@@ -21,12 +19,12 @@ export default function AeoProduct({ darkMode }: AeoProductProps) {
         {/* A. Hero Section */}
         <Hero 
           darkMode={darkMode} 
-          titleLine1="Get cited by every" 
-          titleLine2="AI answer engine" 
-          subtitle="ChatGPT, Perplexity, Gemini and Claude recommend you, not them." 
+          titleLine1="Cold outbound that" 
+          titleLine2="books meetings on autopilot" 
+          subtitle="Find leads, write in your voice, warm up your inboxes, sends, and triages every reply." 
         />
 
-        {/* B. Workflow Canvas locked to SEO (Rank on AI search) */}
+        {/* B. Workflow Canvas locked to Outbound (emails) */}
         <div className="relative">
           <div className="border-border relative flex flex-col overflow-hidden border-b lg:h-[min(1000px,90vh)] lg:min-h-[700px]">
             
@@ -56,9 +54,8 @@ export default function AeoProduct({ darkMode }: AeoProductProps) {
 
             {/* Centered Content Container */}
             <div className="relative z-10 flex flex-col flex-1 min-h-0 w-full max-w-[1432px] mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-8">
-              {/* Workflow Canvas display */}
               <section className="relative min-h-0 flex-1 w-full pb-4 sm:pb-6 md:pb-8">
-                <WorkflowCanvas activeTab="seo" setActiveTab={() => {}} darkMode={darkMode} isFixedScenario={true} />
+                <WorkflowCanvas activeTab="emails" setActiveTab={() => {}} darkMode={darkMode} isFixedScenario={true} />
               </section>
             </div>
 
@@ -67,34 +64,24 @@ export default function AeoProduct({ darkMode }: AeoProductProps) {
 
         <div className="border-border border-t" />
 
-        {/* C. Visibility Score Section */}
-        <VisibilityScore subtitle="See where you're not being cited across every AI platform." />
-
-        <div className="border-border border-t" />
-
-        {/* D. Competitors & Prompts side-by-side grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-2">
-          <AeoCompetitors />
-          <AeoTrackedPrompts />
+        {/* C. Find Warm Leads & Drafts in your voice (3fr / 1fr split) */}
+        <section className="grid grid-cols-1 md:grid-cols-[3fr_1fr]">
+          <ContactsTable variant="outbound" />
+          <DraftsInYourVoice />
         </section>
 
         <div className="border-border border-t" />
 
-        {/* E. Citation Matrix Section */}
-        <AeoCitationMatrix />
+        {/* D. Lead Enrichment & Auto Warm-up */}
+        <LeadEnrichmentWarmUp variant="outbound" />
+
+        {/* E. Inbox Manager */}
+        <InboxManager variant="outbound" />
 
         <div className="border-border border-t" />
 
-        {/* F. Sources & Publish Content split grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr]">
-          <AeoCitationSources />
-          <AeoPublishContent />
-        </section>
-
-        <div className="border-border border-t" />
-
-        {/* G. FAQ Accordion Section */}
-        <AeoFaq />
+        {/* F. FAQ Accordion Section */}
+        <OutboundFaq />
 
       </div>
     </main>

@@ -3,29 +3,36 @@ import { ArrowRight } from 'lucide-react';
 
 interface HeroProps {
   darkMode: boolean;
+  badge?: string;
+  titleLine1: string;
+  titleLine2?: string;
+  titleTypewriter?: string[]; // If present, use typing effect for line 2
+  subtitle: string;
 }
 
-export default function Hero({ darkMode }: HeroProps) {
+export default function Hero({ 
+  darkMode, 
+  badge,
+  titleLine1, 
+  titleLine2 = '', 
+  titleTypewriter, 
+  subtitle 
+}: HeroProps) {
   const [text, setText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(110);
 
-  const keywords = [
-    'AI search',
-    'content enrichment',
-    'email outbound',
-    'brand awareness'
-  ];
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Typing effect loop
   useEffect(() => {
+    if (!titleTypewriter || titleTypewriter.length === 0) return;
+
     let timer: number;
     const handleType = () => {
-      const i = loopNum % keywords.length;
-      const fullWord = keywords[i] + '.'; // Type the word including the fullstop
+      const i = loopNum % titleTypewriter.length;
+      const fullWord = titleTypewriter[i] + '.'; // Type the word including the fullstop
 
       if (isDeleting) {
         setText(fullWord.substring(0, text.length - 1));
@@ -36,7 +43,6 @@ export default function Hero({ darkMode }: HeroProps) {
       }
 
       if (!isDeleting && text === fullWord) {
-        // Pause at the end of the word before deleting
         timer = window.setTimeout(() => setIsDeleting(true), 1800);
         return;
       }
@@ -44,7 +50,7 @@ export default function Hero({ darkMode }: HeroProps) {
       if (isDeleting && text === '') {
         setIsDeleting(false);
         setLoopNum(loopNum + 1);
-        timer = window.setTimeout(() => {}, 400); // Pause before starting the next word
+        timer = window.setTimeout(() => {}, 400);
         return;
       }
 
@@ -53,7 +59,7 @@ export default function Hero({ darkMode }: HeroProps) {
 
     timer = window.setTimeout(handleType, typingSpeed);
     return () => clearTimeout(timer);
-  }, [text, isDeleting, loopNum, typingSpeed]);
+  }, [text, isDeleting, loopNum, typingSpeed, titleTypewriter]);
 
   // Halftone Dot Matrix Cluster Animation
   useEffect(() => {
@@ -100,7 +106,6 @@ export default function Hero({ darkMode }: HeroProps) {
       const cx = width * 0.85 + Math.sin(animTime * 0.005) * 30;
       const cy = height * 0.15 + Math.cos(animTime * 0.004) * 20;
 
-      // Span full container
       const maxClusterRadius = Math.sqrt(width * width + height * height);
 
       const cols = Math.ceil(width / gridSpacing);
@@ -115,10 +120,8 @@ export default function Hero({ darkMode }: HeroProps) {
           const dy = y - cy;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Span full container with a soft minimum baseline intensity
           let intensity = 0.15 + 0.85 * Math.pow(Math.max(0, 1 - dist / maxClusterRadius), 1.8);
 
-          // Traveling wave rippling outward (expanding) with a higher amplitude (0.24) and wider bands (0.012)
           const wave = Math.sin(dist * 0.012 - animTime * 0.045) * 0.24;
           intensity = Math.max(0, Math.min(1, intensity + wave));
 
@@ -215,23 +218,29 @@ export default function Hero({ darkMode }: HeroProps) {
       <div className="relative z-10 mx-auto max-w-[1800px] px-6 pt-20 pb-8 sm:px-10 sm:pt-28 sm:pb-10 lg:px-16 flex flex-col items-start justify-center">
         
         {/* Left-Aligned Stack */}
-        <div className="flex flex-col items-start gap-6 text-left max-w-2xl">
+        <div className="flex flex-col items-start gap-6 text-left max-w-2xl select-none">
           
-          {/* Headline with Typing Animation */}
+          {badge && <span className="feature-badge">{badge}</span>}
+
+          {/* Headline */}
           <h1 className="text-foreground text-[28px] sm:text-[40px] md:text-[48px] leading-[1.15] font-light tracking-tight">
-            <span className="block">Marketing agents</span>
-            <span className="block whitespace-nowrap">
-              that win{' '}
-              <span className="inline font-normal text-foreground select-none">
-                {text}
-                <span className="text-primary animate-[blink_1s_step-end_infinite]">|</span>
+            <span className="block">{titleLine1}</span>
+            {titleTypewriter && titleTypewriter.length > 0 ? (
+              <span className="block whitespace-nowrap">
+                that win{' '}
+                <span className="inline font-normal text-foreground select-none">
+                  {text}
+                  <span className="text-primary animate-[blink_1s_step-end_infinite]">|</span>
+                </span>
               </span>
-            </span>
+            ) : (
+              <span className="block">{titleLine2}</span>
+            )}
           </h1>
 
           {/* Subtext */}
           <p className="text-muted-foreground text-base sm:text-lg font-normal leading-relaxed max-w-[280px] sm:max-w-md">
-            Full-stack marketing agents that win you customers across every channel.
+            {subtitle}
           </p>
 
           {/* Compact CTA Buttons */}
