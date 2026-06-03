@@ -4,6 +4,9 @@ import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import AeoProduct from './pages/AeoProduct';
 import EmailOutbound from './pages/EmailOutbound';
+import Manifesto from './pages/Manifesto';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -33,7 +36,13 @@ export default function App() {
           path === '/products/aeo' || 
           path === '/products/aeo/' ||
           path === '/products/email-outbound' ||
-          path === '/products/email-outbound/'
+          path === '/products/email-outbound/' ||
+          path === '/manifesto' ||
+          path === '/manifesto/' ||
+          path === '/terms' ||
+          path === '/terms/' ||
+          path === '/privacy' ||
+          path === '/privacy/'
         ) {
           e.preventDefault();
           window.history.pushState(null, '', a.href);
@@ -74,6 +83,9 @@ export default function App() {
 
   const isAeoRoute = currentPath === '/products/aeo' || currentPath === '/products/aeo/';
   const isOutboundRoute = currentPath === '/products/email-outbound' || currentPath === '/products/email-outbound/';
+  const isManifestoRoute = currentPath === '/manifesto' || currentPath === '/manifesto/';
+  const isTermsRoute = currentPath === '/terms' || currentPath === '/terms/';
+  const isPrivacyRoute = currentPath === '/privacy' || currentPath === '/privacy/';
 
   return (
     <div className="dark:bg-background min-h-screen bg-[#FAF9F5] text-foreground">
@@ -87,6 +99,12 @@ export default function App() {
         <AeoProduct darkMode={darkMode} />
       ) : isOutboundRoute ? (
         <EmailOutbound darkMode={darkMode} />
+      ) : isManifestoRoute ? (
+        <Manifesto />
+      ) : isTermsRoute ? (
+        <TermsOfService />
+      ) : isPrivacyRoute ? (
+        <PrivacyPolicy />
       ) : (
         <>
           {/* Sticky Growth Engineering Manifesto Bar */}
