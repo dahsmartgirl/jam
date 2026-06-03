@@ -115,13 +115,13 @@ export default function DraftsInYourVoice() {
           
           {/* Metadata Fields */}
           <div className="flex flex-col gap-1.5 text-[11px] border-b border-border/10 pb-2 shrink-0">
-            <div className="flex items-baseline gap-2">
-              <span className="text-muted-foreground/50 w-8">To:</span>
+            <div className="flex items-baseline gap-2 min-w-0">
+              <span className="text-muted-foreground/50 w-12 shrink-0">To:</span>
               <span className="text-foreground font-normal truncate">{activeDraft.name}</span>
               <span className="text-muted-foreground/60 font-mono truncate">&lt;{activeDraft.email}&gt;</span>
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-muted-foreground/50 w-8">Subject:</span>
+            <div className="flex items-baseline gap-2 min-w-0">
+              <span className="text-muted-foreground/50 w-12 shrink-0">Subject:</span>
               <span className="text-foreground font-normal truncate">{activeDraft.subject}</span>
             </div>
           </div>

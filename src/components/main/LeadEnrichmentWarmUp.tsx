@@ -245,8 +245,13 @@ export default function LeadEnrichmentWarmUp({ variant = 'home' }: LeadEnrichmen
               </p>
             </div>
             <div className="divide-border/30 divide-y">
-              {accounts.map((acct) => (
-                <div key={acct.email} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5">
+              {accounts.map((acct, idx) => (
+                <div 
+                  key={acct.email} 
+                  className={`grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-2.5 ${
+                    idx === 2 ? 'max-md:!border-t-0' : ''
+                  }`}
+                >
                   <span className="text-foreground truncate text-xs">
                     {acct.email}
                   </span>

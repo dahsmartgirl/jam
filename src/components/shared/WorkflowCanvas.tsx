@@ -24,6 +24,7 @@ import {
   Users,
   UserSearch,
   CheckCircle2,
+  Check,
   ArrowRight,
   Play,
   Github,
@@ -163,25 +164,6 @@ const SCENARIOS = [
             totalFound: 127,
             posts: [
               {
-                id: "tw-1",
-                platform: "twitter",
-                authorName: "Sarah Kim",
-                authorHandle: "founder_sarah",
-                followers: "8.4k",
-                text: "We've been struggling with email deliverability for months. Tried Sendgrid, Mailgun, and Postmark. Our open rates tanked from 45% to 12%. Anyone have a solution that actually works for cold outreach at scale?",
-                engagement: { likes: 287, comments: 42, shares: 89 }
-              },
-              {
-                id: "rd-1",
-                platform: "reddit",
-                authorName: "throwaway_founder",
-                subreddit: "r/SaaS",
-                upvoteRatio: "94%",
-                title: "Our cold email reply rate dropped from 8% to 1%. What changed?",
-                text: "We used to get solid reply rates on our outbound. Same ICP, same offer, but replies just fell off a cliff. Tried rewriting sequences, switching ESPs, nothing works. Is cold email just dead for SaaS or are we doing something wrong?",
-                engagement: { likes: 342, comments: 87 }
-              },
-              {
                 id: "tw-2",
                 platform: "twitter",
                 authorName: "Marcus Chen",
@@ -191,23 +173,46 @@ const SCENARIOS = [
                 engagement: { likes: 534, comments: 67, shares: 145 }
               },
               {
+                id: "rd-1",
+                platform: "reddit",
+                authorName: "throwaway_founder",
+                subreddit: "r/SaaS",
+                authorHandle: "throwaway_founder",
+                upvoteRatio: "94%",
+                title: "Our cold email reply rate dropped from 8% to 1%. What changed?",
+                text: "We used to get solid reply rates on our outbound. Same ICP, same offer, but replies just fell off a cliff. Tried rewriting sequences, switching ESPs, nothing works. Is cold email just dead for SaaS or are we doing something wrong?",
+                engagement: { likes: 342, comments: 87 }
+              },
+              {
+                id: "tw-1",
+                platform: "twitter",
+                authorName: "Sarah Kim",
+                authorHandle: "founder_sarah",
+                followers: "8.4k",
+                text: "We've been struggling with email deliverability for months. Tried Sendgrid, Mailgun, and Postmark. Our open rates tanked from 45% to 12%. Anyone have a solution that actually works for cold outreach at scale?",
+                engagement: { likes: 287, comments: 42, shares: 89 }
+              },
+              {
+                id: "rd-3",
+                platform: "reddit",
+                authorName: "bootstrapped_ben",
+                subreddit: "r/SaaS",
+                authorHandle: "bootstrapped_ben",
+                upvoteRatio: "95%",
+                title: "How are you doing outbound in 2026?",
+                text: "How are you doing outbound in 2026? What stack are you using? Let me know.",
+                engagement: { likes: 290, comments: 59 }
+              },
+              {
                 id: "rd-2",
                 platform: "reddit",
                 authorName: "series_a_grind",
                 subreddit: "r/startups",
+                authorHandle: "series_a_grind",
                 upvoteRatio: "91%",
                 title: "Looking for an alternative to Apollo + Instantly + Lemlist stack",
                 text: "Currently paying $400/mo across three tools for outbound. Apollo for leads, Instantly for warmup, Lemlist for sequences. Looking for something that does it all in one place without the complexity. Any recommendations?",
                 engagement: { likes: 189, comments: 56 }
-              },
-              {
-                id: "tw-3",
-                platform: "twitter",
-                authorName: "Jen Park",
-                authorHandle: "indie_dev_jen",
-                followers: "3.2k",
-                text: "Spent the entire weekend trying to set up email warmup for our new domain. Why is this still so painful in 2026? I just want to send cold emails without landing in spam.",
-                engagement: { likes: 156, comments: 31, shares: 28 }
               }
             ]
           }
@@ -435,6 +440,79 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
   // Active email draft tab state
   const [selectedEmailIdx, setSelectedEmailIdx] = useState<number>(0);
 
+  // Redesigned drafts table preview states & functions for send-cold-emails
+  const [draftsState, setDraftsState] = useState<any[]>([]);
+  const [selectedDraftIds, setSelectedDraftIds] = useState<string[]>([]);
+  const [expandedDraftIds, setExpandedDraftIds] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sendingState, setSendingState] = useState<'idle' | 'sending' | 'success'>('idle');
+
+  const report = useMemo(() => {
+    return scenario.messages.find(m => m.toolCall?.output)?.toolCall?.output as any;
+  }, [scenario]);
+
+  useEffect(() => {
+    if (scenario.id === 'send-cold-emails' && report?.drafts) {
+      setDraftsState(report.drafts.map((d: any) => ({ ...d, status: 'Pending' })));
+      setSelectedDraftIds([]);
+      setExpandedDraftIds([]);
+      setSearchQuery('');
+      setSendingState('idle');
+    }
+  }, [scenario, report, playbackKey, toolCompleted]);
+
+  const handleApproveIndividual = (id: string) => {
+    setDraftsState(prev => prev.map(d => d.id === id ? { ...d, status: 'Approved' } : d));
+  };
+  const handleRejectIndividual = (id: string) => {
+    setDraftsState(prev => prev.map(d => d.id === id ? { ...d, status: 'Rejected' } : d));
+  };
+  const handleApproveAll = () => {
+    setDraftsState(prev => prev.map(d => ({ ...d, status: 'Approved' })));
+  };
+  const handleRejectAll = () => {
+    setDraftsState(prev => prev.map(d => ({ ...d, status: 'Rejected' })));
+  };
+  const toggleSelect = (id: string) => {
+    setSelectedDraftIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+  const handleSelectAll = (checked: boolean, filteredIds: string[]) => {
+    if (checked) {
+      setSelectedDraftIds(filteredIds);
+    } else {
+      setSelectedDraftIds([]);
+    }
+  };
+  const toggleExpand = (id: string) => {
+    setExpandedDraftIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+  const handleSendApproved = () => {
+    const count = draftsState.filter(d => d.status === 'Approved').length;
+    if (count === 0) {
+      alert('Please approve at least one email draft before sending.');
+      return;
+    }
+    setSendingState('sending');
+    setTimeout(() => {
+      setSendingState('success');
+    }, 1800);
+  };
+
+  // Redesigned Rank on AI search states
+  const [showGaps, setShowGaps] = useState<boolean>(true);
+  const [showLeaderboard, setShowLeaderboard] = useState<boolean>(true);
+  const [showFreshness, setShowFreshness] = useState<boolean>(true);
+  const [showChanges, setShowChanges] = useState<boolean>(true);
+
+  // Redesigned Monitor social states
+  const [socialFilter, setSocialFilter] = useState<'all' | 'twitter' | 'reddit'>('all');
+  const [socialSort, setSocialSort] = useState<'engagement' | 'time'>('engagement');
+  const [expandedPostIds, setExpandedPostIds] = useState<string[]>([]);
+
   // Collapsible sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
@@ -470,6 +548,13 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
     setActiveToolRun(null);
     setToolCompleted(false);
     setSelectedEmailIdx(0);
+    setShowGaps(true);
+    setShowLeaderboard(true);
+    setShowFreshness(true);
+    setShowChanges(true);
+    setSocialFilter('all');
+    setSocialSort('engagement');
+    setExpandedPostIds([]);
 
     // Initial workflow node states
     const initialStates: Record<string, 'idle' | 'running' | 'completed'> = {};
@@ -620,82 +705,201 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
       case 'rank-on-ai-search': {
         const report = scenario.messages[3].toolCall?.output as any;
         return (
-          <div className="p-5 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-6">
-            {/* Top Score Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b border-border/50 pb-5">
-              <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Citation Score</span>
-                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>7%</span>
-                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>13 of 184 responses</span>
-              </div>
-              <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Identified Gaps</span>
-                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>6 Gaps</span>
-                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>Stale & missing content</span>
-              </div>
-              <div className="bg-card border border-border p-4 rounded-xl flex flex-col justify-center">
-                <span className={`${isMobile ? 'text-xs' : 'text-[11px]'} text-muted-foreground uppercase font-semibold tracking-wider`}>Content Freshness</span>
-                <span className={`${isMobile ? 'text-4xl' : 'text-3xl'} font-light text-foreground mt-1`}>68%</span>
-                <span className={`${isMobile ? 'text-sm' : 'text-xs'} text-muted-foreground/80 mt-1`}>19 of 28 pages fresh</span>
+          <div className="p-4 sm:p-6 overflow-y-auto h-full text-left bg-background text-foreground space-y-6 select-none shadow-none">
+            {/* Header */}
+            <div className="flex flex-col gap-1 border-b border-border/40 pb-4 shadow-none">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight">AI Citation Report</h2>
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground shadow-none">
+                <span className="font-mono text-foreground/80">https://trylumen.com</span>
+                <span>•</span>
+                <span>Checked Apr 3, 2026, 11:30 AM</span>
+                <span>•</span>
+                <span className="text-green-600 dark:text-green-400 font-medium">+1 citation</span>
               </div>
             </div>
 
-            {/* Platform breakdowns */}
-            <div className="space-y-3">
-              <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Platforms Citation Rate</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {Object.entries(report?.platformBreakdown || {}).map(([platform, stats]: [string, any]) => {
-                  const percent = Math.round((stats.ourSiteCited / stats.total) * 100);
+            {/* 3 side-by-side key metric cards */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 shadow-none">
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Questions Tracked</span>
+                <span className="text-xl sm:text-3xl font-bold text-foreground mt-1 tracking-tight">184</span>
+              </div>
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Your Citations</span>
+                <span className="text-xl sm:text-3xl font-bold text-foreground mt-1 tracking-tight">13</span>
+              </div>
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Citation Gaps</span>
+                <span className="text-xl sm:text-3xl font-bold text-foreground mt-1 tracking-tight">6</span>
+              </div>
+            </div>
+
+            {/* Platform Breakdown */}
+            <div className="space-y-3 shadow-none">
+              <h3 className="text-xs sm:text-sm font-bold tracking-tight text-foreground/90 uppercase">Platform Breakdown</h3>
+              <div className="border border-border/40 rounded-xl bg-card/45 overflow-hidden shadow-none">
+                {Object.entries(report?.platformBreakdown || {}).map(([platform, stats]: [string, any], idx, arr) => {
                   return (
-                    <div key={platform} className="bg-muted/10 border border-border/30 p-3 rounded-lg flex flex-col">
-                      <div className={`flex justify-between items-center font-semibold ${isMobile ? 'text-base' : 'text-sm'}`}>
-                        <span>{platform}</span>
-                        <span className="text-foreground">{percent}%</span>
+                    <div 
+                      key={platform} 
+                      className={`p-3 sm:p-4 flex items-center justify-between text-xs sm:text-sm border-b border-border/40 last:border-b-0 shadow-none`}
+                    >
+                      <div className="font-semibold text-foreground w-1/3">
+                        {platform}
                       </div>
-                      <div className={`${isMobile ? 'h-3.5' : 'h-2.5'} w-full bg-muted/40 rounded-full overflow-hidden mt-2`}>
-                        <div className="h-full bg-foreground rounded-full" style={{ width: `${percent}%` }} />
+                      <div className="text-muted-foreground text-center w-1/3">
+                        {stats.withCitations}/{stats.total} questions cited
                       </div>
-                      <span className={`text-muted-foreground/70 mt-1.5 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{stats.ourSiteCited} citations ({stats.withCitations} with mentions)</span>
+                      <div className="text-foreground font-semibold text-right w-1/3">
+                        You: cited {stats.ourSiteCited}x
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Cited Brands comparison chart */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Cited Brands count</h4>
-                <div className="border border-border rounded-xl bg-card p-4 space-y-3">
-                  {report?.citedBrands.map((b: any) => (
-                    <div key={b.brand} className={`space-y-1 ${isMobile ? 'text-base' : 'text-sm'}`}>
-                      <div className="flex justify-between font-medium">
-                        <span className={b.brand.includes('Us') ? 'text-foreground font-bold' : 'text-foreground/75'}>{b.brand}</span>
-                        <span className="text-muted-foreground">{b.count} mentions</span>
-                      </div>
-                      <div className={`${isMobile ? 'h-4' : 'h-3'} w-full bg-muted/40 rounded-full overflow-hidden`}>
-                        <div 
-                          className={`h-full rounded-full ${b.brand.includes('Us') ? 'bg-foreground' : 'bg-foreground/20'}`} 
-                          style={{ width: `${b.pct}%` }} 
-                        />
-                      </div>
+            {/* Competitor Leaderboard (5) Collapsible Section */}
+            <div className="space-y-3 shadow-none">
+              <button 
+                onClick={() => setShowLeaderboard(!showLeaderboard)}
+                className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight text-foreground/90 uppercase hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0 outline-none"
+              >
+                <span>Competitor Leaderboard (5)</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showLeaderboard ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showLeaderboard && (
+                <div className="space-y-2.5 shadow-none">
+                  <div className="text-xs text-muted-foreground/75 font-normal pl-0.5">
+                    You are cited 13 times
+                  </div>
+                  <div className="border border-border/40 rounded-xl bg-card/45 overflow-hidden shadow-none">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse text-xs sm:text-sm min-w-[500px] sm:min-w-0 table-fixed">
+                        <thead>
+                          <tr className="bg-muted/15 border-b border-border/40 text-muted-foreground font-semibold select-none">
+                            <th className="p-3 w-[30%]">Brand</th>
+                            <th className="p-3 w-[25%] text-center">Citations</th>
+                            <th className="p-3 w-[45%]">Platforms</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y-0">
+                          {[
+                            { brand: "HubSpot", citations: 142, platforms: "ChatGPT, Perplexity, Claude" },
+                            { brand: "Mailchimp", citations: 98, platforms: "ChatGPT, Perplexity" },
+                            { brand: "Apollo.io", citations: 76, platforms: "ChatGPT, Perplexity, Claude" },
+                            { brand: "Lemlist", citations: 54, platforms: "ChatGPT, Perplexity" },
+                            { brand: "Lumen (Us)", citations: 13, platforms: "ChatGPT, Perplexity, Claude", highlight: true }
+                          ].map((row, i) => (
+                            <tr 
+                              key={i} 
+                              className={`hover:bg-muted/5 transition-colors border-b border-border/40 last:border-b-0 ${
+                                row.highlight ? 'bg-primary/5 font-semibold' : ''
+                              }`}
+                            >
+                              <td className="p-3 text-foreground truncate max-w-0">{row.brand}</td>
+                              <td className="p-3 text-center tabular-nums text-foreground">{row.citations}</td>
+                              <td className="p-3 text-muted-foreground truncate max-w-0">{row.platforms}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              {/* Gaps List */}
-              <div className="space-y-3">
-                <h4 className={`${isMobile ? 'text-sm' : 'text-xs'} font-bold uppercase tracking-wider text-muted-foreground`}>Identified Opportunity Gaps</h4>
-                <div className="border border-border rounded-xl bg-card p-4 divide-y divide-border/30 max-h-[220px] overflow-y-auto">
-                  {report?.gaps.map((gap: any, i: number) => (
-                    <div key={i} className="py-2.5 first:pt-0 last:pb-0">
-                      <div className={`font-semibold text-foreground truncate ${isMobile ? 'text-base' : 'text-sm'}`}>{gap.question}</div>
-                      <div className={`text-muted-foreground/80 mt-0.5 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{gap.opportunity}</div>
+            {/* Content Freshness Collapsible Section */}
+            <div className="space-y-3 shadow-none">
+              <button 
+                onClick={() => setShowFreshness(!showFreshness)}
+                className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight text-foreground/90 uppercase hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0 outline-none"
+              >
+                <span>Content Freshness</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showFreshness ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showFreshness && (
+                <div className="space-y-2.5 shadow-none">
+                  <div className="text-xs text-muted-foreground/75 font-normal pl-0.5">
+                    28 pages published, 9 need refresh
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 shadow-none">
+                    <div className="border border-border/40 bg-gradient-to-b from-card/60 to-card/25 hover:border-border/80 hover:bg-card/50 p-3 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                      <span className="text-[9px] sm:text-[10px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Total Pages</span>
+                      <span className="text-lg sm:text-2xl font-bold text-foreground mt-0.5 tracking-tight">28</span>
                     </div>
-                  ))}
+                    <div className="border border-border/40 bg-gradient-to-b from-card/60 to-card/25 hover:border-border/80 hover:bg-card/50 p-3 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                      <span className="text-[9px] sm:text-[10px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Fresh</span>
+                      <span className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400 mt-0.5 tracking-tight">19</span>
+                    </div>
+                    <div className="border border-border/40 bg-gradient-to-b from-card/60 to-card/25 hover:border-border/80 hover:bg-card/50 p-3 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                      <span className="text-[9px] sm:text-[10px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Stale</span>
+                      <span className="text-lg sm:text-2xl font-bold text-amber-600 dark:text-amber-500 mt-0.5 tracking-tight">9</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+            </div>
+
+            {/* Changes Since Last Check Collapsible Section */}
+            <div className="space-y-3 shadow-none">
+              <button 
+                onClick={() => setShowChanges(!showChanges)}
+                className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight text-foreground/90 uppercase hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0 outline-none"
+              >
+                <span>Changes Since Last Check</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showChanges ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showChanges && (
+                <div className="border border-border/40 bg-card/45 p-3 rounded-xl flex flex-col gap-1 text-xs text-foreground/85 shadow-none">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600 dark:text-green-400 font-semibold font-mono text-sm">+1 citation</span>
+                    <span className="text-muted-foreground/60">•</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">ChatGPT</span>
+                  </div>
+                  <div className="text-muted-foreground text-[11px] leading-relaxed mt-0.5">
+                    <span className="font-semibold text-foreground/90 font-mono">trylumen.com/blog/cold-email-tools</span> has been newly cited on ChatGPT for queries regarding best cold outreach stacks.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Citation Gaps Collapsible Table */}
+            <div className="space-y-3 shadow-none">
+              <button 
+                onClick={() => setShowGaps(!showGaps)}
+                className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight text-foreground/90 uppercase hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-0 outline-none"
+              >
+                <span>Citation Gaps ({report?.gaps.length || 0})</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showGaps ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showGaps && (
+                <div className="border border-border/40 rounded-xl bg-card/45 overflow-hidden shadow-none">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs sm:text-sm min-w-[500px] sm:min-w-0 table-fixed">
+                      <thead>
+                        <tr className="bg-muted/15 border-b border-border/40 text-muted-foreground font-semibold select-none">
+                          <th className="p-3 w-[60%]">Question</th>
+                          <th className="p-3 w-[40%]">Opportunity</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y-0">
+                        {report?.gaps.map((gap: any, i: number) => (
+                          <tr key={i} className="hover:bg-muted/5 transition-colors border-b border-border/40 last:border-b-0">
+                            <td className="p-3 font-medium text-foreground truncate max-w-0">{gap.question}</td>
+                            <td className="p-3 text-muted-foreground truncate max-w-0">{gap.opportunity}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -703,41 +907,209 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
 
       case 'monitor-social': {
         const report = scenario.messages[3].toolCall?.output as any;
+        
+        // Filter and sort posts
+        const processedPosts = (() => {
+          let result = [...(report?.posts || [])];
+          if (socialFilter !== 'all') {
+            result = result.filter(p => p.platform === socialFilter);
+          }
+          
+          const postsWithMetrics = result.map(p => {
+            const totalEng = p.engagement.likes + p.engagement.comments + (p.engagement.shares || 0);
+            let ageStr = '';
+            let ageHours = 0;
+            if (p.id === 'tw-2') { ageStr = '2 hours ago'; ageHours = 2; }
+            else if (p.id === 'rd-1') { ageStr = '5 hours ago'; ageHours = 5; }
+            else if (p.id === 'tw-1') { ageStr = '1 day ago'; ageHours = 24; }
+            else if (p.id === 'rd-3') { ageStr = '3 days ago'; ageHours = 72; }
+            else if (p.id === 'rd-2') { ageStr = '1 week ago'; ageHours = 168; }
+            
+            return {
+              ...p,
+              totalEngagement: totalEng,
+              ageStr,
+              ageHours
+            };
+          });
+          
+          if (socialSort === 'engagement') {
+            postsWithMetrics.sort((a, b) => b.totalEngagement - a.totalEngagement);
+          } else {
+            postsWithMetrics.sort((a, b) => a.ageHours - b.ageHours);
+          }
+          
+          return postsWithMetrics;
+        })();
+
+        const togglePostExpand = (postId: string) => {
+          setExpandedPostIds(prev => 
+            prev.includes(postId) ? prev.filter(id => id !== postId) : [...prev, postId]
+          );
+        };
+
         return (
-          <div className="p-4 overflow-y-auto h-full text-left bg-transparent text-foreground space-y-4">
-            <div className="flex justify-between items-center pb-2 border-b border-border/50">
-              <span className={`font-bold uppercase tracking-wider text-muted-foreground ${isMobile ? 'text-sm' : 'text-xs'}`}>Social Lead Stream</span>
-              <span className={`border border-border/60 bg-muted/20 text-foreground font-semibold px-2 py-0.5 rounded-full font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{report?.totalFound} hits found</span>
+          <div className="p-4 sm:p-6 overflow-y-auto h-full text-left bg-background text-foreground space-y-6 shadow-none">
+            {/* Header */}
+            <div className="flex flex-col gap-1 border-b border-border/40 pb-4 shadow-none">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight">Social Search Results</h2>
             </div>
 
-            <div className="space-y-3.5">
-              {report?.posts.map((post: any) => (
-                <div key={post.id} className="border border-border rounded-xl bg-card p-4 hover:shadow-2xs transition-shadow">
-                  {/* Post Header */}
-                  <div className={`flex flex-wrap items-center gap-x-2 gap-y-1.5 ${isMobile ? 'text-base' : 'text-sm'}`}>
-                    <div className={`bg-muted text-foreground/80 font-mono px-2 py-0.5 rounded border border-border/30 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
-                      {post.platform === 'twitter' ? 'X/Twitter' : 'Reddit'}
+            {/* 4 side-by-side metric cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 shadow-none">
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Total Found</span>
+                <span className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">127</span>
+              </div>
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Twitter</span>
+                <span className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">67</span>
+              </div>
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Reddit</span>
+                <span className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">60</span>
+              </div>
+              <div className="bg-gradient-to-b from-card/60 to-card/25 border border-border/40 hover:border-border/80 hover:bg-card/50 p-3 sm:p-4 rounded-xl flex flex-col justify-center shadow-none transition-all duration-200">
+                <span className="text-[9px] sm:text-[11px] text-muted-foreground/80 uppercase font-semibold tracking-wider">Total Engagement</span>
+                <span className="text-xl sm:text-2xl font-bold text-foreground mt-1 tracking-tight">2.4K</span>
+              </div>
+            </div>
+
+            {/* Filter & Sort row */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 shadow-none">
+              {/* Redesigned Filter segmented button group */}
+              <div className="border border-border/40 bg-muted/20 p-1 rounded-lg flex gap-1 w-fit shadow-none">
+                {(['all', 'twitter', 'reddit'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setSocialFilter(tab)}
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer border-0 outline-none ${
+                      socialFilter === tab
+                        ? 'bg-card text-foreground shadow-none'
+                        : 'bg-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              {/* Redesigned Sort segmented button group */}
+              <div className="border border-border/40 bg-muted/20 p-1 rounded-lg flex gap-1 w-fit shadow-none">
+                <button
+                  onClick={() => setSocialSort('engagement')}
+                  className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer border-0 outline-none ${
+                    socialSort === 'engagement'
+                      ? 'bg-card text-foreground shadow-none'
+                      : 'bg-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Engagement
+                </button>
+                <button
+                  onClick={() => setSocialSort('time')}
+                  className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer border-0 outline-none ${
+                    socialSort === 'time'
+                      ? 'bg-card text-foreground shadow-none'
+                      : 'bg-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  Time
+                </button>
+              </div>
+            </div>
+
+            {/* Posts feed list container */}
+            <div className="space-y-3 shadow-none">
+              <div className="flex justify-between items-center pb-2 border-b border-border/40 shadow-none">
+                <span className="font-bold text-sm text-foreground">Posts ({processedPosts.length})</span>
+              </div>
+
+              <div className="space-y-3 shadow-none">
+                {processedPosts.map((post: any) => {
+                  const isExpanded = expandedPostIds.includes(post.id);
+                  const platformIcon = post.platform === 'twitter' ? <TwitterIcon /> : <RedditIcon />;
+                  
+                  // Compute platform-specific engagement display for header
+                  const isTwitter = post.platform === 'twitter';
+                  const engagementHeaderDisplay = isTwitter
+                    ? `Likes ${post.engagement.likes} · Reposts ${post.engagement.shares}`
+                    : `Upvotes ${post.engagement.likes} · Comments ${post.engagement.comments}`;
+
+                  return (
+                    <div
+                      key={post.id}
+                      onClick={() => togglePostExpand(post.id)}
+                      className="border border-border/40 rounded-xl bg-card/45 overflow-hidden hover:border-border/80 transition-colors cursor-pointer text-left shadow-none"
+                    >
+                      {/* Post Card Header */}
+                      <div className="p-4 flex items-center justify-between gap-3 select-none border-b border-border/40 last:border-b-0 shadow-none">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              togglePostExpand(post.id);
+                            }}
+                            className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+                          >
+                            <ChevronRight className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                          </button>
+                          <div className="flex-shrink-0">{platformIcon}</div>
+                          <div className="flex items-baseline gap-1.5 flex-wrap">
+                            <span className="font-semibold text-foreground text-sm">{post.authorName}</span>
+                            <span className="text-muted-foreground text-xs font-mono">
+                              {isTwitter ? `@${post.authorHandle}` : `r/${post.subreddit}`}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs font-mono text-muted-foreground">
+                          <span className="font-medium text-foreground/80">{engagementHeaderDisplay}</span>
+                          <span>•</span>
+                          <span>{post.ageStr}</span>
+                        </div>
+                      </div>
+
+                      {/* Post Card Body / Snippet */}
+                      <div className="px-4 pb-4 pt-3 pl-12 text-left shadow-none">
+                        {post.title && (
+                          <h4 className="font-bold text-foreground text-sm mb-1 leading-snug">{post.title}</h4>
+                        )}
+                        
+                        {isExpanded ? (
+                          <div className="space-y-4 shadow-none">
+                            <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap">{post.text}</p>
+                            
+                            <div className="flex flex-wrap items-center gap-3 text-xs border-t border-border/40 pt-3 shadow-none">
+                              <span className="text-muted-foreground font-mono">
+                                {isTwitter ? `Followers: ${post.followers}` : `Upvote Ratio: ${post.upvoteRatio}`}
+                              </span>
+                              <span className="text-border/40">•</span>
+                              <div className="flex items-center gap-3 font-mono text-muted-foreground shadow-none">
+                                {isTwitter ? (
+                                  <>
+                                    <span>Likes: {post.engagement.likes}</span>
+                                    <span>Reposts: {post.engagement.shares}</span>
+                                    <span>Comments: {post.engagement.comments}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>Upvotes: {post.engagement.likes}</span>
+                                    <span>Comments: {post.engagement.comments}</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-muted-foreground text-sm truncate leading-relaxed">
+                            {post.text}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <span className="font-semibold text-foreground">{post.authorName}</span>
-                    {post.authorHandle && <span className={`text-muted-foreground/75 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>@{post.authorHandle}</span>}
-                    {post.subreddit && <span className={`text-foreground/70 font-mono font-semibold ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{post.subreddit}</span>}
-                    <span className={`text-muted-foreground/50 ml-auto font-mono whitespace-nowrap ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
-                      {post.followers ? `Followers: ${post.followers}` : `Ratio: ${post.upvoteRatio}`}
-                    </span>
-                  </div>
-
-                  {/* Post Content */}
-                  {post.title && <div className={`font-bold mt-2 text-foreground ${isMobile ? 'text-base' : 'text-sm'}`}>{post.title}</div>}
-                  <p className={`mt-1.5 leading-relaxed font-normal text-foreground/85 ${isMobile ? 'text-base' : 'text-sm'}`}>{post.text}</p>
-
-                  {/* Engagement Footer */}
-                  <div className={`flex gap-4 mt-3 text-muted-foreground/80 border-t border-border/30 pt-2 font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
-                    <span>Likes: {post.engagement.likes}</span>
-                    <span>Comments: {post.engagement.comments}</span>
-                    {post.engagement.shares !== undefined && <span>Retweets: {post.engagement.shares}</span>}
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
           </div>
         );
@@ -790,67 +1162,251 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
 
       case 'send-cold-emails': {
         const report = scenario.messages[3].toolCall?.output as any;
-        const currentDraft = report?.drafts[selectedEmailIdx];
-        return (
-          <div className={`h-full flex text-left bg-transparent text-foreground select-none ${isMobile ? 'overflow-x-auto' : ''}`}>
-            <div className={`h-full flex flex-shrink-0 ${isMobile ? 'w-[640px]' : 'w-full'}`}>
-              {/* Email Drafts List Sidebar */}
-              <div className="w-2/5 flex-shrink-0 border-r border-border flex flex-col h-full bg-background/80 backdrop-blur-xs">
-                <div className={`p-3 border-b border-border font-semibold text-muted-foreground flex justify-between items-center ${isMobile ? 'text-base' : 'text-sm'}`}>
-                  <span>Leads Queue</span>
-                  <span className={`font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{report?.totalCount} drafts</span>
-                </div>
-                <div className="flex-1 overflow-y-auto divide-y divide-border/30">
-                  {report?.drafts.map((d: any, idx: number) => (
-                    <button
-                      key={d.id}
-                      onClick={() => setSelectedEmailIdx(idx)}
-                      className={`w-full p-3 flex flex-col gap-0.5 text-left cursor-pointer transition-colors ${
-                        selectedEmailIdx === idx ? 'bg-muted/20 border-l-4 border-foreground' : 'hover:bg-muted/10'
-                      }`}
-                    >
-                      <span className={`font-bold text-foreground ${isMobile ? 'text-base' : 'text-sm'}`}>{d.toName}</span>
-                      <span className={`text-muted-foreground truncate ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{d.toEmail}</span>
-                      <span className={`text-foreground/60 truncate font-mono mt-1 ${isMobile ? 'text-xs' : 'text-[11px]'}`}>{d.subject}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+        const drafts = draftsState.length > 0 ? draftsState : (report?.drafts || []).map((d: any) => ({ ...d, status: 'Pending' }));
+        
+        const filteredDrafts = drafts.filter((d: any) => 
+          d.toName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          d.toEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          d.subject.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
-              {/* Email Detail Pane */}
-              <div className="w-3/5 flex-shrink-0 p-5 flex flex-col h-full overflow-y-auto">
-                {currentDraft ? (
-                  <div className={`space-y-4 h-full flex flex-col ${isMobile ? 'text-base' : 'text-sm'}`}>
-                    <div className="space-y-2 border-b border-border/50 pb-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground w-12 font-medium">To:</span>
-                        <span className="font-semibold">{currentDraft.toName}</span>
-                        <span className={`text-muted-foreground font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>({currentDraft.toEmail})</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground w-12 font-medium">Subject:</span>
-                        <span className="font-semibold font-mono text-foreground">{currentDraft.subject}</span>
-                      </div>
-                    </div>
-                    <div className={`flex-1 bg-muted/5 border border-border/35 rounded-xl p-4 font-mono leading-relaxed whitespace-pre-line text-foreground/80 overflow-y-auto max-h-[220px] ${
-                      isMobile ? 'text-xs' : 'text-[11px]'
-                    }`}>
-                      {currentDraft.body}
-                    </div>
-                    <div className={`flex items-center justify-between text-muted-foreground font-mono ${isMobile ? 'text-xs' : 'text-[11px]'}`}>
-                      <span>* AI Personalized variables auto-mapped</span>
-                      <button className="bg-foreground text-background font-semibold px-3 py-1 rounded-full hover:opacity-90 cursor-pointer shadow-xs transition-opacity">
-                        Send now
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={`flex items-center justify-center h-full text-muted-foreground/40 ${isMobile ? 'text-sm' : 'text-xs'}`}>
-                    Select a draft from the queue
-                  </div>
-                )}
+        const pendingCount = drafts.filter((d: any) => d.status === 'Pending').length;
+        const approvedCount = drafts.filter((d: any) => d.status === 'Approved').length;
+
+        const isAllSelected = filteredDrafts.length > 0 && filteredDrafts.every((d: any) => selectedDraftIds.includes(d.id));
+
+        if (sendingState === 'sending') {
+          return (
+            <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center bg-background select-none min-h-[400px]">
+              <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+              <div className="text-base font-semibold text-foreground">Sending approved emails...</div>
+              <div className="text-xs text-muted-foreground mt-1.5 font-mono">Connecting to warmed-up mailboxes...</div>
+            </div>
+          );
+        }
+
+        if (sendingState === 'success') {
+          return (
+            <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center bg-background select-none min-h-[400px]">
+              <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/30 flex items-center justify-center text-green-500 mb-4 animate-bounce">
+                <Check className="h-6 w-6" />
+              </div>
+              <div className="text-lg font-semibold text-foreground">Campaign Launched!</div>
+              <div className="text-sm text-muted-foreground mt-1">
+                {approvedCount} email{approvedCount === 1 ? '' : 's'} sent successfully.
+              </div>
+              <button 
+                onClick={() => {
+                  setSendingState('idle');
+                  setDraftsState(prev => prev.map((d: any) => ({ ...d, status: 'Pending' })));
+                  setSelectedDraftIds([]);
+                }}
+                className="mt-6 bg-foreground text-background hover:opacity-90 font-semibold px-4 py-2 rounded-lg text-xs transition-opacity shadow-sm cursor-pointer"
+              >
+                Reset Campaign Demo
+              </button>
+            </div>
+          );
+        }
+
+        return (
+          <div className="h-full flex flex-col bg-background text-foreground select-none overflow-y-auto p-4 sm:p-5 space-y-4">
+            
+            {/* Header Block */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/20 pb-4 shrink-0">
+              <div className="text-left">
+                <h2 className="text-xl font-bold text-foreground tracking-tight">Drafts</h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Showing {drafts.length} emails for this campaign.
+                </p>
+              </div>
+              <div className="flex flex-col items-start sm:items-end gap-1.5">
+                <button 
+                  onClick={() => alert('Settings: Custom variables mapped: [Company], [Role], [AI Search citation gap]')}
+                  className="flex items-center gap-1 px-3 py-1.5 border border-border bg-card hover:bg-accent text-foreground text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                  <span>Customize</span>
+                </button>
+                <div className="text-[10px] text-muted-foreground/80 font-mono">
+                  {drafts.length} drafts shown · {pendingCount} pending
+                </div>
               </div>
             </div>
+
+            {/* Tabs Selector Bar */}
+            <div className="border-b border-border/30 flex shrink-0">
+              <div className="border-b-2 border-foreground px-4 py-2 text-xs font-semibold text-foreground">
+                Drafts ({drafts.length})
+              </div>
+            </div>
+
+            {/* Filter and Action Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2 shrink-0">
+              <div className="relative w-full sm:max-w-xs">
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground/45" />
+                <input 
+                  type="text" 
+                  placeholder="Search by name, email, or subject..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-card border border-border rounded-lg pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/35 focus:outline-none focus:ring-1 focus:ring-foreground/20"
+                />
+              </div>
+              {pendingCount > 0 && (
+                <button 
+                  onClick={handleApproveAll}
+                  className="flex items-center justify-center gap-1.5 px-3 py-1.5 border border-border bg-card hover:bg-accent text-foreground text-xs font-semibold rounded-lg transition-colors cursor-pointer w-full sm:w-auto"
+                >
+                  <Check className="h-3.5 w-3.5 text-green-500" />
+                  <span>Approve All ({pendingCount})</span>
+                </button>
+              )}
+            </div>
+
+            {/* Table Container */}
+            <div className={`border border-border rounded-xl bg-card overflow-hidden flex-1 min-h-0 ${isMobile ? 'overflow-x-auto' : 'overflow-y-auto'}`}>
+              <div className={isMobile ? 'min-w-[600px]' : 'w-full'}>
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-muted/15 border-b border-border/40 text-muted-foreground font-semibold">
+                      <th className="p-3 w-12 text-center">
+                        <input 
+                          type="checkbox" 
+                          checked={isAllSelected}
+                          onChange={(e) => handleSelectAll(e.target.checked, filteredDrafts.map((d: any) => d.id))}
+                          className="rounded border-border text-foreground focus:ring-0 cursor-pointer"
+                        />
+                      </th>
+                      <th className="p-3 w-[25%]">Contact</th>
+                      <th className="p-3 w-[35%]">Email</th>
+                      <th className="p-3 w-[15%]">Status</th>
+                      <th className="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/20">
+                    {filteredDrafts.length > 0 ? (
+                      filteredDrafts.map((d: any) => {
+                        const isExpanded = expandedDraftIds.includes(d.id);
+                        const isSelected = selectedDraftIds.includes(d.id);
+                        return (
+                          <React.Fragment key={d.id}>
+                            <tr className={`hover:bg-muted/5 transition-colors ${isSelected ? 'bg-muted/10' : ''}`}>
+                              {/* Checkbox and Expand Chevron */}
+                              <td className="p-3 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <button 
+                                    onClick={() => toggleExpand(d.id)}
+                                    className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+                                  >
+                                    <ChevronRight className={`h-3 w-3 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                                  </button>
+                                  <input 
+                                    type="checkbox" 
+                                    checked={isSelected}
+                                    onChange={() => toggleSelect(d.id)}
+                                    className="rounded border-border text-foreground focus:ring-0 cursor-pointer"
+                                  />
+                                </div>
+                              </td>
+                              {/* Contact Name */}
+                              <td className="p-3 font-semibold text-foreground">
+                                <button 
+                                  onClick={() => toggleExpand(d.id)}
+                                  className="font-semibold text-foreground hover:underline text-left cursor-pointer focus:outline-none"
+                                >
+                                  {d.toName}
+                                </button>
+                              </td>
+                              {/* Email */}
+                              <td className="p-3 text-muted-foreground font-mono">
+                                {d.toEmail}
+                              </td>
+                              {/* Status Badge */}
+                              <td className="p-3">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                                  d.status === 'Approved' 
+                                    ? 'bg-green-500/10 text-green-600 dark:text-green-400' 
+                                    : d.status === 'Rejected'
+                                      ? 'bg-red-500/10 text-red-600 dark:text-red-400'
+                                      : 'bg-muted text-muted-foreground'
+                                }`}>
+                                  {d.status}
+                                </span>
+                              </td>
+                              {/* Quick row actions */}
+                              <td className="p-3 text-right">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button 
+                                    onClick={() => handleApproveIndividual(d.id)}
+                                    className="p-1 hover:bg-green-500/10 rounded text-muted-foreground hover:text-green-500 transition-colors cursor-pointer"
+                                    title="Approve"
+                                  >
+                                    <Check className="h-3.5 w-3.5" />
+                                  </button>
+                                  <button 
+                                    onClick={() => handleRejectIndividual(d.id)}
+                                    className="p-1 hover:bg-red-500/10 rounded text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                                    title="Reject"
+                                  >
+                                    <X className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                            {/* Expanded email view */}
+                            {isExpanded && (
+                              <tr className="bg-muted/5">
+                                <td colSpan={5} className="p-4 border-t border-border/10">
+                                  <div className="space-y-3 pl-8 text-left">
+                                    <div className="flex items-baseline gap-2 border-b border-border/10 pb-2 text-[11px]">
+                                      <span className="text-muted-foreground w-14 shrink-0 font-medium">Subject:</span>
+                                      <span className="text-foreground font-semibold font-mono">{d.subject}</span>
+                                    </div>
+                                    <div className="text-foreground/80 leading-relaxed font-mono text-[11px] whitespace-pre-line bg-card/50 border border-border/10 rounded-xl p-3.5 max-h-[160px] overflow-y-auto">
+                                      {d.body}
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
+                          No drafts found matching search query.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Sticky Bottom Actions Bar */}
+            <div className="border border-border rounded-xl bg-muted/15 p-4 flex items-center justify-between shrink-0">
+              <div className="text-xs text-muted-foreground font-mono">
+                {pendingCount} pending · {approvedCount} approved
+              </div>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleRejectAll}
+                  className="text-xs text-muted-foreground hover:text-foreground font-semibold transition-colors cursor-pointer bg-transparent border-0"
+                >
+                  Reject all
+                </button>
+                <button 
+                  onClick={handleSendApproved}
+                  className="flex items-center gap-1.5 bg-foreground text-background hover:opacity-90 font-semibold px-4 py-2 rounded-lg text-xs transition-opacity shadow-sm cursor-pointer"
+                >
+                  <Send className="h-3 w-3" />
+                  <span>Send approved</span>
+                </button>
+              </div>
+            </div>
+
           </div>
         );
       }
@@ -943,6 +1499,10 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
     setActiveToolRun(null);
     setToolCompleted(false);
     setSelectedEmailIdx(0);
+    setShowGaps(true);
+    setSocialFilter('all');
+    setSocialSort('engagement');
+    setExpandedPostIds([]);
 
     const initialStates: Record<string, 'idle' | 'running' | 'completed'> = {};
     scenario.workflowSteps.forEach(step => {
@@ -1305,6 +1865,19 @@ export default function WorkflowCanvas({ activeTab, setActiveTab, darkMode, isFi
 /* ==========================================================================
    HELPER SUB-COMPONENTS
    ========================================================================== */
+
+const TwitterIcon = () => (
+  <svg className="h-4 w-4 text-[#1DA1F2]" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+  </svg>
+);
+
+const RedditIcon = () => (
+  <svg className="h-4 w-4 text-[#FF4500]" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="12" r="10" fill="#FF4500" />
+    <path d="M12 4a1.5 1.5 0 011.4 2.1l-.8 1.6c1.6.2 3.1.8 4.2 1.7a1.5 1.5 0 11.2 2.2c-.8-.7-1.8-1.2-2.9-1.4l-.5 2.5c1 .5 1.6 1.4 1.6 2.3 0 1.7-2.3 3-5.2 3s-5.2-1.3-5.2-3c0-1 .6-1.8 1.6-2.3l-.5-2.5c-1.1.2-2.1.7-2.9 1.4a1.5 1.5 0 11.2-2.2c1.1-.9 2.6-1.5 4.2-1.7l-.8-1.6A1.5 1.5 0 0112 4z" fill="white" />
+  </svg>
+);
 
 const getToolCallTitle = (name: string) => {
   switch (name) {
